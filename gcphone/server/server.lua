@@ -112,21 +112,6 @@ function getIdentifiant(id)
     end
 end
 
-function getSourceFromIdentifier(identifier)
-    local allPlayers = exports['anti_essential_core']:getAllPlayers()
-    local valeur = nil
-    for key, value in pairs(allPlayers) do
-        if tostring(key) == tostring(identifier) then
-            valeur = value.source
-        end
-    end
-
-    if valeur ~= nil then
-        print('valeur de getSourceFromIdentifier ' .. valeur)
-    end
-    return valeur
-end
-
 --====================================================================================
 --  Contacts
 --====================================================================================
@@ -318,7 +303,7 @@ AddEventHandler('gcphone:internalSendMessage', function(identifier, from, messag
         local mess = _internalAddMessage(from, phone, message, 0)
         getSourceFromIdentifier(identifier, function (osou)
             if osou ~= nil then 
-                TriggerClientEvent("gcphone:receiveMessage", osou, mess)
+                TriggerClientEvent("gcPhone:receiveMessage", osou, mess)
             end
         end) 
     end
@@ -389,7 +374,7 @@ AddEventHandler('gcphone:startCall', function(phone_number)
     end
     local hidden = '0' .. math.random(600000000,799999999)
     if hidden == true then
-        phone_number = '0' .. math.random(600000000,799999999)
+        phone_number = '0' .. math.random(600000000,699999999)
     end
 
     local indexCall = lastIndexCall
@@ -437,10 +422,6 @@ AddEventHandler('gcphone:acceptCall', function(infoCall)
             TriggerClientEvent('gcphone:acceptCall', AppelsEnCours[id].receiver_src, AppelsEnCours[id])
             saveAppels(AppelsEnCours[id])
         end
-		if CallStartTime ~= nil then
-            TriggerServerEvent('gcphone:billCall', Citizen.InvokeNative(0x9A73240B49945C76) - CallStartTime)
-            CallStartTime = nil
-        end
     end
 end)
 
@@ -455,7 +436,7 @@ AddEventHandler('gcphone:rejectCall', function (infoCall)
         end
         if AppelsEnCours[id].receiver_src ~= nil then
             TriggerClientEvent('gcphone:rejectCall', AppelsEnCours[id].receiver_src)
-        end		
+        end
 
         if AppelsEnCours[id].is_accepts == false then 
             saveAppels(AppelsEnCours[id])
@@ -489,18 +470,6 @@ AddEventHandler('gcphone:appelsDeleteAllHistorique', function ()
     appelsDeleteAllHistorique(srcIdentifier)
 end)
 
-RegisterServerEvent('gcphone:billCall')
-AddEventHandler('gcphone:billCall', function(duration)
-
-  local _source = source
-  local xPlayer = ESX.GetPlayerFromId(_source)
-  local amount  = math.floor(duration * 0.34)
-
-  xPlayer.removeAccountMoney('bank', amount)
-
-  TriggerClientEvent('esx:showNotification', _source, 'Votre appel vous a coûté ~r~$' .. amount .. '~s~')
-
-end)
 
 
 
@@ -795,7 +764,7 @@ function getBourse()
 end
 
 --====================================================================================
---  Item 
+--  ITEM
 --====================================================================================
 
 ESX.RegisterServerCallback('gcphone:getItemAmount', function(source, cb, item)

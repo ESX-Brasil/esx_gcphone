@@ -10,7 +10,6 @@ files {
 	'html/static/config/config.json',
 	
 	-- Coque
-	'html/static/img/coque/s8.png',
 	'html/static/img/coque/iphonex.png',
 	'html/static/img/coque/base.png',
 	'html/static/img/coque/transparent.png',
@@ -79,8 +78,8 @@ files {
 }
 
 client_script {
-	"client/client.lua",
 	"client/animation.lua",
+	"client/client.lua",
 	"client/photo.lua",
 	"client/app_tchat.lua",
 }
@@ -90,5 +89,3 @@ server_script {
 	"server/server.lua",
 	"server/app_tchat.lua",
 }
-
-server_export 'GetNumberServer'

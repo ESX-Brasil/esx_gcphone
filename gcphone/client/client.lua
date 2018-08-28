@@ -51,16 +51,29 @@ local messages = {}
 local myPhoneNumber = ''
 local isDead = false
 --====================================================================================
---  Item et open
+--  
 --====================================================================================
+
+function UpMiniMapNotification(text)
+    SetNotificationTextEntry("STRING")
+    AddTextComponentString(text)
+    DrawNotification(0, 1)
+end
 
 Citizen.CreateThread(function()
   while true do
     Citizen.Wait(0)
-    
-    if IsControlJustPressed(0, Keys["F10"]) then
-           TooglePhone()
-           TriggerServerEvent("gcphone:allUpdate")
+	
+    if IsControlJustPressed(1, Keys['F10']) then
+      ESX.TriggerServerCallback('gcphone:getItemAmount', function(qtty)
+		  if qtty > 0 then
+          TooglePhone()
+          TriggerServerEvent("gcphone:allUpdate")
+        else
+          UpMiniMapNotification("Vous n'avez pas de ~r~téléphone~s~")
+        end
+      end, 'phone')
+
     end
     
     if menuIsOpen == true then
@@ -82,7 +95,7 @@ function DeadCheck()
     SendNUIMessage({event = 'updateDead', isDead = isDead})
   end
 end
- 
+
 --====================================================================================
 --  Events
 --====================================================================================
@@ -148,14 +161,13 @@ function ShowNotificationMenuCivil2(text)
   DrawNotification(false, false)
 end
 
-RegisterNUICallback('bank', function()
-	TriggerServerEvent('es_extended:bank')
+RegisterNetEvent('esx:setAccountMoney')
+AddEventHandler('esx:setAccountMoney', function(account)
+  if account.name == 'bank' then
+    SendNUIMessage({event = 'updateBankbalance', banking = account.money})
+  end 
 end)
 
-RegisterNetEvent('es_extended:bank')
-AddEventHandler('es_extended:bank', function(bank)
-	SendNUIMessage({type = 'balanceReturn', bank = bank})
-end)
 --====================================================================================
 --  Function client | Contacts
 --====================================================================================
@@ -343,6 +355,7 @@ RegisterNUICallback('appelsDeleteAllHistorique', function (data, cb)
   appelsDeleteAllHistorique(data.infoCall)
   cb()
 end)
+
 
 
 
