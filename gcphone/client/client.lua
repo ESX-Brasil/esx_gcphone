@@ -27,7 +27,7 @@ end)
 
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(xPlayer)
-  PlayerData = xPlayer   
+  PlayerData = xPlayer
 end)
 
 RegisterNetEvent('esx:setJob')
@@ -51,7 +51,7 @@ local messages = {}
 local myPhoneNumber = ''
 local isDead = false
 --====================================================================================
---  
+--
 --====================================================================================
 
 function UpMiniMapNotification(text)
@@ -63,19 +63,19 @@ end
 Citizen.CreateThread(function()
   while true do
     Citizen.Wait(0)
-	
+
     if IsControlJustPressed(1, Keys['F10']) then
       ESX.TriggerServerCallback('gcphone:getItemAmount', function(qtty)
 		  if qtty > 0 then
           TooglePhone()
           TriggerServerEvent("gcphone:allUpdate")
         else
-          UpMiniMapNotification("Vous n'avez pas de ~r~téléphone~s~")
+          UpMiniMapNotification("Você não tem nenhum ~r~telefone~s~")
         end
       end, 'phone')
 
     end
-    
+
     if menuIsOpen == true then
       DeadCheck()
       for _, value in ipairs(KeyToucheCloseEvent) do
@@ -87,10 +87,10 @@ Citizen.CreateThread(function()
     end
   end
 end)
- 
-function DeadCheck() 
+
+function DeadCheck()
   local dead = IsEntityDead(GetPlayerPed(-1))
-  if dead ~= isDead then 
+  if dead ~= isDead then
     isDead = dead
     SendNUIMessage({event = 'updateDead', isDead = isDead})
   end
@@ -126,7 +126,7 @@ AddEventHandler("gcphone:receiveMessage", function(message)
         SetNotificationTextEntry("STRING");
         AddTextComponentString(message.message);
 		TriggerEvent('InteractSound_CL:PlayOnOne', 'demo', 1.0)
-        SetNotificationMessage("CHAR_CHAT_CALL", "CHAR_CHAT_CALL", false, 1, "~y~Nouveau message :~s~", "");
+        SetNotificationMessage("CHAR_CHAT_CALL", "CHAR_CHAT_CALL", false, 1, "~y~Nova mensagem: ~s~", "");
         DrawNotification(false, true);
         --SetNotificationTextEntry("STRING")
         --AddTextComponentString('~o~Nouveau message')
@@ -141,10 +141,10 @@ end)
 
 RegisterNetEvent("OpenTel")
 AddEventHandler("OpenTel", function()
-  
+
   menuIsOpen = true
-  
-  if menuIsOpen == true then 
+
+  if menuIsOpen == true then
     Citizen.Trace('open')
     ePhoneInAnim()
     Wait(1000)
@@ -165,17 +165,17 @@ RegisterNetEvent('esx:setAccountMoney')
 AddEventHandler('esx:setAccountMoney', function(account)
   if account.name == 'bank' then
     SendNUIMessage({event = 'updateBankbalance', banking = account.money})
-  end 
+  end
 end)
 
 --====================================================================================
 --  Function client | Contacts
 --====================================================================================
-function addContact(display, num) 
+function addContact(display, num)
     TriggerServerEvent('gcphone:addContact', display, num)
 end
 
-function deleteContact(num) 
+function deleteContact(num)
     TriggerServerEvent('gcphone:deleteContact', num)
 end
 --====================================================================================
@@ -188,7 +188,7 @@ end
 function deleteMessage(msgId)
   Citizen.Trace('deleteMessage' .. msgId)
   TriggerServerEvent('gcphone:deleteMessage', msgId)
-  for k, v in ipairs(messages) do 
+  for k, v in ipairs(messages) do
     if v.id == msgId then
       table.remove(messages, k)
       SendNUIMessage({event = 'updateMessages', messages = messages})
@@ -207,7 +207,7 @@ end
 
 function setReadMessageNumber(num)
   TriggerServerEvent('gcphone:setReadMessageNumber', num)
-  for k, v in ipairs(messages) do 
+  for k, v in ipairs(messages) do
     if v.transmitter == num then
       v.isRead = true
     end
@@ -309,7 +309,7 @@ function ignoreCall(infoCall)
   TriggerServerEvent('gcphone:ignoreCall', infoCall)
 end
 
-function requestHistoriqueCall() 
+function requestHistoriqueCall()
   TriggerServerEvent('gcphone:getHistoriqueCall')
 end
 
@@ -320,7 +320,7 @@ end
 function appelsDeleteAllHistorique ()
   TriggerServerEvent('gcphone:appelsDeleteAllHistorique')
 end
-  
+
 
 --====================================================================================
 --  Event - Appels
@@ -420,7 +420,7 @@ end)
 
 --====================================================================================
 --  Gestion des evenements NUI
---==================================================================================== 
+--====================================================================================
 function tprint (t, s)
   for k, v in pairs(t) do
       local kfmt = '["' .. tostring(k) ..'"]'
@@ -452,7 +452,7 @@ end)
 RegisterNUICallback('reponseText', function(data, cb)
   local limit = data.limit or 255
   local text = data.text or ''
-  
+
   DisplayOnscreenKeyboard(1, "FMMC_MPM_NA", "", text, "", "", "", limit)
   while (UpdateOnscreenKeyboard() == 0) do
       DisableAllControlActions(0);
@@ -495,7 +495,7 @@ end)
 --====================================================================================
 --  Event - Contacts
 --====================================================================================
-RegisterNUICallback('addContact', function(data, cb) 
+RegisterNUICallback('addContact', function(data, cb)
   TriggerServerEvent('gcphone:addContact', data.display, data.phoneNumber)
 end)
 
@@ -518,44 +518,44 @@ end)
 RegisterNUICallback('callEvent', function(data, cb)
   local plyPos = GetEntityCoords(GetPlayerPed(-1), true)
   if data.eventName ~= 'cancel' then
-    if data.data ~= nil then 
+    if data.data ~= nil then
       --TriggerServerEvent("call:makeCall", "police", {x=plyPos.x,y=plyPos.y,z=plyPos.z},ResultMotifAdd,GetPlayerServerId(player))
       TriggerServerEvent("call:makeCall", data.eventName, {x=plyPos.x,y=plyPos.y,z=plyPos.z}, data.data, GetPlayerServerId(player))
       if data.eventName == "police" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé la ~b~Police")
+        ShowNotificationMenuCivil2("~h~Você ligou para a ~b~Police")
       elseif data.eventName == "taxi" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Taxi")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Taxi")
       elseif data.eventName == "mecano" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Mécano")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Mécano")
       elseif data.eventName == "journaliste" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Journaliste")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Journaliste")
       elseif data.eventName == "ambulance" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Ambulancier")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Ambulancier")
       elseif data.eventName == "unicorn" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé le ~b~Unicorn")
+        ShowNotificationMenuCivil2("~h~Você ligou para a ~b~Unicorn")
 	  elseif data.eventName == "state" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~agent du Gouvernement")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~agent du Gouvernement")
 	  elseif data.eventName == "pilot" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Pilot")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Pilot")
 	  elseif data.eventName == "fib" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~agent du FBI")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~agent du FBI")
 	  elseif data.eventName == "army" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Millitaire")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Millitaire")
 	  elseif data.eventName == "realestateagent" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Agent Immobillier")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Agent Immobillier")
 	  elseif data.eventName == "pilot" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Pilot")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Pilot")
 	  elseif data.eventName == "epicerie" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Épicier")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Épicier")
 	  elseif data.eventName == "brinks" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~agent de la Brinks")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~agent de la Brinks")
 	  elseif data.eventName == "bahama" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé le ~b~Bahama mamas")
+        ShowNotificationMenuCivil2("~h~Você ligou para a ~b~Bahama mamas")
       end
-	  
-	  
-	
-	
+
+
+
+
     else
       local limit = data.limit or 255
       local text = data.text or ''
@@ -570,35 +570,35 @@ RegisterNUICallback('callEvent', function(data, cb)
         end
         TriggerServerEvent("call:makeCall", data.eventName, {x=plyPos.x,y=plyPos.y,z=plyPos.z}, text, GetPlayerServerId(player))
       if data.eventName == "police" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé la ~b~Police")
+        ShowNotificationMenuCivil2("~h~Você ligou para a ~b~Police")
       elseif data.eventName == "taxi" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Taxi")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Taxi")
       elseif data.eventName == "mecano" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Mécano")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Mécano")
       elseif data.eventName == "journaliste" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Journaliste")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Journaliste")
       elseif data.eventName == "ambulance" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Ambulancier")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Ambulancier")
       elseif data.eventName == "unicorn" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé le ~b~Unicorn")
+        ShowNotificationMenuCivil2("~h~Você ligou para a ~b~Unicorn")
 	  elseif data.eventName == "state" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~agent du Gouvernement")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~agent du Gouvernement")
 	  elseif data.eventName == "pilot" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Pilot")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Pilot")
 	  elseif data.eventName == "fib" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~agent du FBI")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~agent du FBI")
 	  elseif data.eventName == "army" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Millitaire")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Millitaire")
 	  elseif data.eventName == "realestateagent" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Agent Immobillier")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Agent Immobillier")
 	  elseif data.eventName == "pilot" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Pilot")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Pilot")
 	  elseif data.eventName == "epicerie" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~Épicier")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Épicier")
 	  elseif data.eventName == "brinks" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé un ~b~agent de la Brinks")
+        ShowNotificationMenuCivil2("~h~Você chamou um ~b~agent de la Brinks")
 	  elseif data.eventName == "bahama" then
-        ShowNotificationMenuCivil2("~h~Vous avez appelé le ~b~Bahama mamas")
+        ShowNotificationMenuCivil2("~h~Você ligou para a ~b~Bahama mamas")
       end
       else
         TriggerEvent('esx_ambulancejob:heal')
@@ -614,7 +614,7 @@ RegisterNUICallback('deleteALL', function(data, cb)
 end)
 
 RegisterNUICallback('callEvent', function(data, cb)
-  if data.data ~= nil then 
+  if data.data ~= nil then
     TriggerEvent(data.eventName, data.data)
   else
     TriggerEvent(data.eventName)
@@ -626,7 +626,7 @@ function TooglePhone()
 
       menuIsOpen = not menuIsOpen
       SendNUIMessage({show = menuIsOpen})
-      if menuIsOpen == true then 
+      if menuIsOpen == true then
         Citizen.Trace('open')
         ePhoneInAnim()
       else

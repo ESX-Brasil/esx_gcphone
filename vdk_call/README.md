@@ -4,7 +4,7 @@
 
 ## Installation
 
-- Download the resource here : https://github.com/vodkhard/vdk_call
+- Download the resource here : https://github.com/ESX-Brasil/esx_gcphone/tree/master/vdk_call
 - Place the folder "vdk_call" to resources folder of FiveM
 
 ## Usage

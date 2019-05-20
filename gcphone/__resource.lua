@@ -1,3 +1,9 @@
+resource_manifest_version '44febabe-d386-4d18-afbe-5e627f4af937'
+
+description 'ESX GCPhone'
+
+version '1.1.0'
+
 ui_page 'html/index.html'
 
 files {
@@ -8,12 +14,12 @@ files {
 	'html/static/js/vendor.js',
 
 	'html/static/config/config.json',
-	
+
 	-- Coque
 	'html/static/img/coque/iphonex.png',
 	'html/static/img/coque/base.png',
 	'html/static/img/coque/transparent.png',
-	
+
 	-- Background
 	'html/static/img/background/back001.jpg',
 	'html/static/img/background/back002.jpg',
@@ -39,7 +45,7 @@ files {
 	'html/static/img/background/19.jpg',
 	'html/static/img/background/20.jpg',
 	'html/static/img/background/21.jpg',
-	
+
 	'html/static/img/icons_app/call.png',
 	'html/static/img/icons_app/contacts.png',
 	'html/static/img/icons_app/sms.png',
@@ -63,7 +69,7 @@ files {
 	'html/static/img/icons_app/pilot.png',
 	'html/static/img/icons_app/unicorn.png',
 	'html/static/img/icons_app/agent.png',
-	
+
 	'html/static/img/app_bank/logo_mazebank.jpg',
 
 	'html/static/img/app_tchat/splashtchat.png',
@@ -88,4 +94,12 @@ server_script {
 	'@mysql-async/lib/MySQL.lua',
 	"server/server.lua",
 	"server/app_tchat.lua",
+}
+
+dependencies {
+	'es_extended',
+	'mysql-async',
+	'essentialmode',
+	'esplugin_mysql',
+	'async'
 }

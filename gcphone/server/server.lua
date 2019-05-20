@@ -1,11 +1,3 @@
---====================================================================================
--- #Author: Jonathan D @Gannon
--- #Version 2.0
---====================================================================================
-
---====================================================================================
---  Utils
---====================================================================================
 ESX = nil
 
 TriggerEvent('esx:getSharedObject', function(obj)
@@ -90,7 +82,7 @@ function getNumberPhone(identifier)
     end
     return nil
 end
-function getIdentifierByPhoneNumber(phone_number) 
+function getIdentifierByPhoneNumber(phone_number)
     local result = MySQL.Sync.fetchAll("SELECT users.identifier FROM users WHERE users.phone_number = @phone_number", {
         ['@phone_number'] = phone_number
     })
@@ -135,7 +127,7 @@ function addContact(source, identifier, number, display)
 end
 
 function updateContact(source, identifier, id, number, display)
-    MySQL.Sync.execute("UPDATE phone_users_contacts SET number = @number, display = @display WHERE id = @id", { 
+    MySQL.Sync.execute("UPDATE phone_users_contacts SET number = @number, display = @display WHERE id = @id", {
         ['@number'] = number,
         ['@display'] = display,
         ['@id'] = id,
@@ -158,7 +150,7 @@ function deleteAllContact(identifier)
 end
 
 function notifyContactChange(source, identifier)
-    if source ~= nil then 
+    if source ~= nil then
         TriggerClientEvent("gcphone:contactList", source, getContacts(identifier))
     end
 end
@@ -210,13 +202,13 @@ end
 function addMessage(source, identifier, phone_number, message)
     local otherIdentifier = getIdentifierByPhoneNumber(phone_number)
     local myPhone = getNumberPhone(identifier)
-    if otherIdentifier ~= nil then 
+    if otherIdentifier ~= nil then
         local tomess = _internalAddMessage(myPhone, phone_number, message, 0)
         getSourceFromIdentifier(otherIdentifier, function (osou)
-            if osou ~= nil then 
+            if osou ~= nil then
                TriggerClientEvent("gcphone:receiveMessage", osou, tomess)
             end
-        end) 
+        end)
     end
     local memess = _internalAddMessage(phone_number, myPhone, message, 1)
     TriggerClientEvent("gcphone:receiveMessage", source, memess)
@@ -224,7 +216,7 @@ end
 
 function setReadMessageNumber(identifier, num)
     local mePhoneNumber = getNumberPhone(identifier)
-    MySQL.Sync.execute("UPDATE phone_messages SET phone_messages.isRead = 1 WHERE phone_messages.receiver = @receiver AND phone_messages.transmitter = @transmitter", { 
+    MySQL.Sync.execute("UPDATE phone_messages SET phone_messages.isRead = 1 WHERE phone_messages.receiver = @receiver AND phone_messages.transmitter = @transmitter", {
         ['@receiver'] = mePhoneNumber,
         ['@transmitter'] = num
     })
@@ -253,7 +245,7 @@ end
 
 RegisterServerEvent('gcphone:sendMessage')
 AddEventHandler('gcphone:sendMessage', function(phoneNumber, message)
-	local source = source					   
+	local source = source
     local identifier = GetPlayerIdentifiers(source)[1]
    -- print(identifier)
     addMessage(source, identifier, phoneNumber, message)
@@ -267,14 +259,14 @@ end)
 RegisterServerEvent('gcphone:deleteMessageNumber')
 AddEventHandler('gcphone:deleteMessageNumber', function(number)
     local identifier = GetPlayerIdentifiers(source)[1]
-	local source = source					   
+	local source = source
     deleteAllMessageFromPhoneNumber(identifier, number)
     TriggerClientEvent("gcphone:allMessage", source, getMessages(identifier))
 end)
 
 RegisterServerEvent('gcphone:deleteAllMessage')
 AddEventHandler('gcphone:deleteAllMessage', function()
-	local source = source					   
+	local source = source
     local identifier = GetPlayerIdentifiers(source)[1]
     deleteAllMessage(identifier)
     TriggerClientEvent("gcphone:allMessage", source, getMessages(identifier))
@@ -288,7 +280,7 @@ end)
 
 RegisterServerEvent('gcphone:deleteALL')
 AddEventHandler('gcphone:deleteALL', function()
-	local source = source					   
+	local source = source
     local identifier = GetPlayerIdentifiers(source)[1]
     deleteAllMessage(identifier)
     deleteAllContact(identifier)
@@ -299,13 +291,13 @@ end)
 RegisterServerEvent('gcphone:internalSendMessage')
 AddEventHandler('gcphone:internalSendMessage', function(identifier, from, message)
     local phone = getNumberPhone(identifier)
-    if phone ~= nil then 
+    if phone ~= nil then
         local mess = _internalAddMessage(from, phone, message, 0)
         getSourceFromIdentifier(identifier, function (osou)
-            if osou ~= nil then 
+            if osou ~= nil then
                 TriggerClientEvent("gcPhone:receiveMessage", osou, mess)
             end
-        end) 
+        end)
     end
 end)
 
@@ -322,7 +314,7 @@ function getHistoriqueCall (num)
     return result
 end
 
-function sendHistoriqueCall (src, num) 
+function sendHistoriqueCall (src, num)
     local histo = getHistoriqueCall(num)
     TriggerClientEvent('gcphone:historiqueCall', src, histo)
 end
@@ -354,7 +346,7 @@ function saveAppels (appelInfo)
     end
 end
 
-function notifyNewAppelsHisto (src, num) 
+function notifyNewAppelsHisto (src, num)
     sendHistoriqueCall(src, num)
 end
 
@@ -368,7 +360,7 @@ end)
 
 RegisterServerEvent('gcphone:startCall')
 AddEventHandler('gcphone:startCall', function(phone_number)
-    if phone_number == nil then 
+    if phone_number == nil then
         print('BAD CALL NUMBER IS NIL')
         return
     end
@@ -438,7 +430,7 @@ AddEventHandler('gcphone:rejectCall', function (infoCall)
             TriggerClientEvent('gcphone:rejectCall', AppelsEnCours[id].receiver_src)
         end
 
-        if AppelsEnCours[id].is_accepts == false then 
+        if AppelsEnCours[id].is_accepts == false then
             saveAppels(AppelsEnCours[id])
         end
         AppelsEnCours[id] = nil
@@ -516,10 +508,10 @@ end)
 AddEventHandler('es:playerLoaded',function(source)
     local identifier = GetPlayerIdentifiers(source)[1]
     local myPhoneNumber = getNumberPhone(identifier)
-    while myPhoneNumber == nil or myPhoneNumber == 0 do 
+    while myPhoneNumber == nil or myPhoneNumber == 0 do
         local randomNumberPhone = getPhoneRandomNumber()
         print('TryPhone: ' .. randomNumberPhone)
-        MySQL.Sync.execute("UPDATE users SET phone = @randomNumberPhone WHERE identifier = @identifier", { 
+        MySQL.Sync.execute("UPDATE users SET phone = @randomNumberPhone WHERE identifier = @identifier", {
             ['@randomNumberPhone'] = randomNumberPhone,
             ['@identifier'] = identifier
         })
@@ -589,14 +581,14 @@ end)
 --         -- end
 
 --         Stopwatch.Stop()
-        
+
 --         next(Result)
 
 --         return Result
 --     end
 -- end
 
--- function MySQLInsertMessage(Parameters) 
+-- function MySQLInsertMessage(Parameters)
 --     local Query = "INSERT INTO phone_messages (`transmitter`, `receiver`,`message`, `isRead`,`owner`) VALUES(@transmitter, @receiver, @message, @isRead, @owner)"
 --     local Query2 = 'SELECT * from phone_messages WHERE `id` = (SELECT LAST_INSERT_ID())'
 --     local Connection = MySQL:createConnection()
@@ -633,8 +625,8 @@ end)
 -- print('result: ' .. json.encode(result))
 -- local mess = MySQL.Sync.fetchAll('SELECT * from phone_messages WHERE `id` = (SELECT LAST_INSERT_ID())', {})
 -- print('result: ' .. json.encode(mess))
--- for _, v in pairs(data) do 
---     for key, vv in pairs(v) do 
+-- for _, v in pairs(data) do
+--     for key, vv in pairs(v) do
 --         print(key .. ' -> ' .. vv)
 --     end
 --     print('----')
@@ -672,8 +664,8 @@ end)
 --     })
 -- print('DATA')
 
--- for _, v in pairs(data) do 
---     for key, vv in pairs(v) do 
+-- for _, v in pairs(data) do
+--     for key, vv in pairs(v) do
 --         print(key .. ' -> ' .. vv)
 --     end
 --     print('----')
@@ -683,8 +675,8 @@ end)
 --         ['@identifier'] = identifier
 --     })
 -- print('DATA')
--- for _, v in pairs(data) do 
---     for key, vv in pairs(v) do 
+-- for _, v in pairs(data) do
+--     for key, vv in pairs(v) do
 --         print(key .. ' -> ' .. vv)
 --     end
 --     print('----')
@@ -708,7 +700,7 @@ end)
 -- print('')
 -- print('Contacts')
 -- local listContacts = getContacts(identifier)
--- for _, v in ipairs(listContacts) do 
+-- for _, v in ipairs(listContacts) do
 --     print(v.display .. ' => ' .. v.number)
 -- end
 
@@ -716,8 +708,8 @@ end)
 -- print('Messages')
 -- local mesasges = getMessages(identifier)
 -- print(#mesasges)
--- for _, v in pairs(mesasges) do 
---     for key, vv in pairs(v) do 
+-- for _, v in pairs(mesasges) do
+--     for key, vv in pairs(v) do
 --         print(key .. ' -> ' .. vv)
 --     end
 --     print('----')
@@ -736,12 +728,12 @@ end)
 --====================================================================================
 function getBourse()
     --  Format
-    --  Array 
+    --  Array
     --    Object
     --      -- libelle type String    | Nom
     --      -- price type number      | Prix actuelle
-    --      -- difference type number | Evolution 
-    -- 
+    --      -- difference type number | Evolution
+    --
     -- local result = MySQL.Sync.fetchAll("SELECT * FROM `recolt` LEFT JOIN `items` ON items.`id` = recolt.`treated_id` WHERE fluctuation = 1 ORDER BY price DESC",{})
     local result = {
         {

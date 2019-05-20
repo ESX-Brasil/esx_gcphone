@@ -9,13 +9,13 @@ local inService = {
     ["journaliste"] = {},
     ["ambulance"] = {},
     ["taxi"] = {},
-	["mecano"] = {},
+    ["mecano"] = {},
     ["pilot"] = {},
-	["fib"] = {},
-	["army"] = {},
-	["realestateagent"] = {},
-	["epicerie"] = {},
-	["brinks"] = {},
+    ["fib"] = {},
+    ["army"] = {},
+    ["realestateagent"] = {},
+    ["epicerie"] = {},
+    ["brinks"] = {},
     ["state"] = {},
     ["bahama"] = {},
 }
@@ -25,15 +25,15 @@ local callActive = {
     ["journaliste"] = {taken = false},
     ["ambulance"] = {taken = false},
     ["taxi"] = {taken = false},
-	["mecano"] = {taken = false},
-	["pilot"] = {taken = false},
-	["fib"] = {taken = false},
-	["army"] = {taken = false},
-	["realestateagent"] = {taken = false},
-	["epicerie"] = {taken = false},
-	["brinks"] = {taken = false},
+	  ["mecano"] = {taken = false},
+	  ["pilot"] = {taken = false},
+	  ["fib"] = {taken = false},
+	  ["army"] = {taken = false},
+	  ["realestateagent"] = {taken = false},
+	  ["epicerie"] = {taken = false},
+	  ["brinks"] = {taken = false},
     ["state"] = {taken = false},
-	["bahama"] = {taken = false},
+	  ["bahama"] = {taken = false},
 }
 local timing = 60000
 
@@ -41,7 +41,7 @@ local timing = 60000
 AddEventHandler("player:serviceOn", function(job)
 local source = source
 print ("Prise de service !!")
-    table.insert(inService[job], source)	
+    table.insert(inService[job], source)
 end)
 
 -- Remove the player to the inService table

@@ -16,18 +16,18 @@ Citizen.CreateThread(function()
         if IsControlJustPressed(1, 246) and callActive then
 			if isCall == false then
 				TriggerServerEvent("call:getCall", work)
-				SendNotification("~b~Vous avez pris l'appel !")
+				ESX.ShowNotification("~b~Você atendeu a chamada!")
 				target.blip = AddBlipForCoord(target.pos.x, target.pos.y, target.pos.z)
 				SetBlipRoute(target.blip, true)
 				haveTarget = true
 				isCall = true
 				callActive = false
 			else
-				SendNotification("~r~Vous avez déjà un appel en cours !")
+				ESX.ShowNotification("~r~Você já esta em uma chamada!")
 			end
         -- Press L key to decline the call
         elseif IsControlJustPressed(1, 249) and callActive then
-            SendNotification("~r~Vous avez refusé l'appel.")
+            ESX.ShowNotification("~r~Você recusou a ligação.")
             callActive = false
         end
         if haveTarget then
@@ -49,7 +49,7 @@ AddEventHandler("call:cancelCall", function()
         haveTarget = false
 		isCall = false
 	else
-		TriggerEvent("itinerance:notif", "~r~Vous n'avez aucun appel en cours !")
+		TriggerEvent("itinerance:notif", "~r~Você não tem chamadas em andamento!")
 	end
 end)
 
@@ -58,52 +58,52 @@ AddEventHandler("call:callIncoming", function(job, pos, msg)
     callActive = true
     work = job
     target.pos = pos
-	SendNotification("Appuyez sur ~b~Y~s~ pour prendre l'appel ou ~r~N~s~ pour le refuser")
+	ESX.ShowNotification("Pressione ~b~Y~s~ para atender a chamada ou ~r~N~s~ para recusar")
 	if work == "police" then
-		SendNotification("~b~APPEL EN COURS:~w~ " ..tostring(msg))
-		--SendNotification("Appuyez sur ~g~Y~s~ pour prendre l'appel ou ~g~L~s~ pour le refuser")
+		ESX.ShowNotification("~b~CHAMADA EM PROGRESSO:~w~ " ..tostring(msg))
+    --ESX.ShowNotification("Pressione ~g~Y~s~ para atender a chamada ou ~g~L~s~ para recusar")
 	elseif work == "mecano" then
-		SendNotification("~o~APPEL EN COURS:~w~ " ..tostring(msg))
+		ESX.ShowNotification("~o~CHAMADA EM PROGRESSO:~w~ " ..tostring(msg))
 	elseif work == "taxi" then
-		SendNotification("~y~APPEL EN COURS:~w~ " ..tostring(msg))
-		--SendNotification("Appuyez sur ~g~Y~s~ pour prendre l'appel ou ~g~L~s~ pour le refuser")
+		ESX.ShowNotification("~y~CHAMADA EM PROGRESSO:~w~ " ..tostring(msg))
+		--ESX.ShowNotification("Pressione ~g~Y~s~ para atender a chamada ou ~g~L~s~ para recusar")
 	elseif work == "ambulance" then
-		SendNotification("~r~APPEL EN COURS:~w~ " ..tostring(msg))
+		ESX.ShowNotification("~r~CHAMADA EM PROGRESSO:~w~ " ..tostring(msg))
 	elseif work == "fib" then
-		SendNotification("~r~APPEL EN COURS:~w~ " ..tostring(msg))
+		ESX.ShowNotification("~r~CHAMADA EM PROGRESSO:~w~ " ..tostring(msg))
 	elseif work == "pilot" then
-		SendNotification("~r~APPEL EN COURS:~w~ " ..tostring(msg))
+		ESX.ShowNotification("~r~CHAMADA EM PROGRESSO:~w~ " ..tostring(msg))
 	elseif work == "epicerie" then
-		SendNotification("~r~APPEL EN COURS:~w~ " ..tostring(msg))
+		ESX.ShowNotification("~r~CHAMADA EM PROGRESSO:~w~ " ..tostring(msg))
 	elseif work == "brinks" then
-		SendNotification("~r~APPEL EN COURS:~w~ " ..tostring(msg))
+		ESX.ShowNotification("~r~CHAMADA EM PROGRESSO:~w~ " ..tostring(msg))
 	elseif work == "army" then
-		SendNotification("~r~APPEL EN COURS:~w~ " ..tostring(msg))
+		ESX.ShowNotification("~r~CHAMADA EM PROGRESSO:~w~ " ..tostring(msg))
 	elseif work == "realestateagent" then
-		SendNotification("~r~APPEL EN COURS:~w~ " ..tostring(msg))
+		ESX.ShowNotification("~r~CHAMADA EM PROGRESSO:~w~ " ..tostring(msg))
 	elseif work == "unicorn" then
-		SendNotification("~r~APPEL EN COURS:~w~ " ..tostring(msg))
+		ESX.ShowNotification("~r~CHAMADA EM PROGRESSO:~w~ " ..tostring(msg))
 	elseif work == "journaliste" then
-		SendNotification("~r~APPEL EN COURS:~w~ " ..tostring(msg))
+		ESX.ShowNotification("~r~CHAMADA EM PROGRESSO:~w~ " ..tostring(msg))
 	elseif work == "state" then
-		SendNotification("~r~APPEL EN COURS:~w~ " ..tostring(msg))
+		ESX.ShowNotification("~r~CHAMADA EM PROGRESSO:~w~ " ..tostring(msg))
 	end
 end)
 
 RegisterNetEvent("call:taken")
 AddEventHandler("call:taken", function()
     callActive = false
-    SendNotification("L'appel a été pris")
+    ESX.ShowNotification("A chamada foi feita")
 end)
 
 RegisterNetEvent("target:call:taken")
 AddEventHandler("target:call:taken", function(taken)
     if taken == 1 then
-        SendNotification("~b~Quelqu'un arrive !")
+        ESX.ShowNotification("~b~Alguém está vindo!")
     elseif taken == 0 then
-        SendNotification("~r~Personne ne peut venir !")
+        ESX.ShowNotification("~r~Ninguém pode vir!")
     elseif taken == 2 then
-        SendNotification("~o~Veuillez rappeler dans quelques instants.")
+        ESX.ShowNotification("~o~Por favor, ligue de volta em alguns instantes.")
     end
 end)
 
@@ -112,7 +112,7 @@ AddEventHandler('playerDropped', function()
 	TriggerServerEvent("player:serviceOff", nil)
 end)
 
-function SendNotification(message)
+function ESX.ShowNotification(message)
     SetNotificationTextEntry('STRING')
     AddTextComponentString(message)
     DrawNotification(false, false)
