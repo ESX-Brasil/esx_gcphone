@@ -7,15 +7,15 @@
 ![Image of gcphone5](https://i.imgur.com/9h7eiI8.png)
 
 ## Funcionalidades
-  - Lista de contatos
-  - Enviar sms
-  - chamada de voz
-  - Chamada anônima
-  - Solicitação bancária
-  - Aplicativo de bate-papo anônimo
-  - Aplicativo do Exchange
-  - Shell / Fundo personalizável
-  - . . .
+- Lista de contatos
+- Enviar sms
+- chamada de voz
+- Chamada anônima
+- Solicitação bancária
+- Aplicativo de bate-papo anônimo
+- Aplicativo do Exchange
+- Capas / Fundo personalizável
+- . . .
 
 
 ## Configuração
@@ -26,7 +26,7 @@
 {
   "//": "Nome da rede localizada na barra de telefone",
   "reseau": "ESX-Brasil",
-  
+
   "//": "Cor básica do telefone",
   "themeColor": "#303f9f",
 
@@ -144,7 +144,7 @@
       ]
     }
   ],
-  
+
   "//": "Adicionar contato padrão",
   "defaultContacts": [
     { "number": "ambulance" , "display": "AABBUULLAANNCCEE", "icon": "/html/static/img/icons_app/bank.png" },
@@ -213,7 +213,7 @@
       "routeName": "tchat"
     }
   ],
-  
+
   "//": "Configuração dos idiomas do telefone",
   "language": {
     "pt_BR": {
@@ -244,7 +244,7 @@
 FixePhone = {
   -- Delegacia de polícia
   ['911'] = { name =  "Delegacia de polícia", coords = { x = 441.2, y = -979.7, z = 30.58 } },
-  
+
   -- Cabine perto da delegacia de polícia
   ['008-0001'] = { name = "Cabine telefônica", coords = { x = 372.25, y = -965.75, z = 28.58 } },
 }
