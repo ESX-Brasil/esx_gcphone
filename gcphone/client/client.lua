@@ -1,651 +1,545 @@
 --====================================================================================
 -- #Author: Jonathan D @ Gannon
 --====================================================================================
--- Configuration
-
-local Keys = {
-  ["ESC"] = 322, ["F1"] = 288, ["F2"] = 289, ["F3"] = 170, ["F5"] = 166, ["F6"] = 167, ["F7"] = 168, ["F8"] = 169, ["F9"] = 56, ["F10"] = 57,
-  ["~"] = 243, ["1"] = 157, ["2"] = 158, ["3"] = 160, ["4"] = 164, ["5"] = 165, ["6"] = 159, ["7"] = 161, ["8"] = 162, ["9"] = 163, ["-"] = 84, ["="] = 83, ["BACKSPACE"] = 177,
-  ["TAB"] = 37, ["Q"] = 44, ["W"] = 32, ["E"] = 38, ["R"] = 45, ["T"] = 245, ["Y"] = 246, ["U"] = 303, ["P"] = 199, ["["] = 39, ["]"] = 40, ["ENTER"] = 18,
-  ["CAPS"] = 137, ["A"] = 34, ["S"] = 8, ["D"] = 9, ["F"] = 23, ["G"] = 47, ["H"] = 74, ["K"] = 311, ["L"] = 182,
-  ["LEFTSHIFT"] = 21, ["Z"] = 20, ["X"] = 73, ["C"] = 26, ["V"] = 0, ["B"] = 29, ["N"] = 249, ["M"] = 244, [","] = 82, ["."] = 81,
-  ["LEFTCTRL"] = 36, ["LEFTALT"] = 19, ["SPACE"] = 22, ["RIGHTCTRL"] = 70,
-  ["HOME"] = 213, ["PAGEUP"] = 10, ["PAGEDOWN"] = 11, ["DELETE"] = 178,
-  ["LEFT"] = 174, ["RIGHT"] = 175, ["TOP"] = 27, ["DOWN"] = 173,
-  ["NENTER"] = 201, ["N4"] = 108, ["N5"] = 60, ["N6"] = 107, ["N+"] = 96, ["N-"] = 97, ["N7"] = 117, ["N8"] = 61, ["N9"] = 118
-}
-
-ESX              = nil
-local PlayerData = {}
-
-Citizen.CreateThread(function()
-  while ESX == nil do
-    TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-    Citizen.Wait(0)
-  end
-end)
-
-RegisterNetEvent('esx:playerLoaded')
-AddEventHandler('esx:playerLoaded', function(xPlayer)
-  PlayerData = xPlayer
-end)
-
-RegisterNetEvent('esx:setJob')
-AddEventHandler('esx:setJob', function(job)
-  PlayerData.job = job
-end)
 
 -- Configuration
 local KeyToucheCloseEvent = {
-  { code = 172, event = 'ArrowUp' },
-  { code = 173, event = 'ArrowDown' },
-  { code = 174, event = 'ArrowLeft' },
-  { code = 175, event = 'ArrowRight' },
-  { code = 176, event = 'Enter' },
-  { code = 177, event = 'Backspace' },
+    { code = 172, event = 'ArrowUp' },
+    { code = 173, event = 'ArrowDown' },
+    { code = 174, event = 'ArrowLeft' },
+    { code = 175, event = 'ArrowRight' },
+    { code = 176, event = 'Enter' },
+    { code = 177, event = 'Backspace' },
 }
-
+local KeyOpenClose = 289 -- F2
+local KeyTakeCall = 38 -- E
 local menuIsOpen = false
 local contacts = {}
 local messages = {}
 local myPhoneNumber = ''
 local isDead = false
+local USE_RTC = false
+
+local PhoneInCall = {}
+local currentPlaySound = false
+local soundId = 1485
+
+--====================================================================================
+--  Active ou Deactive une application (appName => config.json)
+--====================================================================================
+
+RegisterNetEvent('gcPhone:setEnableApp')
+AddEventHandler('gcPhone:setEnableApp', function(appName, enable)
+    SendNUIMessage({event = 'setEnableApp', appName = appName, enable = enable })
+end)
+
+--====================================================================================
+--  Gestion des appels fixe
+--====================================================================================
+
+function startFixeCall (fixeNumber)
+    local number = ''
+    DisplayOnscreenKeyboard(1, "FMMC_MPM_NA", "", "", "", "", "", 10)
+    while (UpdateOnscreenKeyboard() == 0) do
+        DisableAllControlActions(0);
+        Wait(0);
+    end
+    if (GetOnscreenKeyboardResult()) then
+        number =  GetOnscreenKeyboardResult()
+    end
+    if number ~= '' then
+        TriggerEvent('gcphone:autoCall', number, {
+            useNumber = fixeNumber
+        })
+        PhonePlayCall(true)
+    end
+end
+
+function TakeAppel (infoCall)
+    TriggerEvent('gcphone:autoAcceptCall', infoCall)
+end
+
+RegisterNetEvent("gcPhone:notifyFixePhoneChange")
+AddEventHandler("gcPhone:notifyFixePhoneChange", function(_PhoneInCall)
+    PhoneInCall = _PhoneInCall
+end)
+
+--[[
+  Affiche les imformations quant le joueurs est proche d'un fixe
+--]]
+function showFixePhoneHelper (coords)
+    for number, data in pairs(FixePhone) do
+        local dist = GetDistanceBetweenCoords(
+            data.coords.x, data.coords.y, data.coords.z,
+            coords.x, coords.y, coords.z, 1)
+        if dist <= 2.0 then
+            SetTextComponentFormat("STRING")
+            AddTextComponentString("~g~" .. data.name .. ' ~o~' .. number .. '~n~~INPUT_PICKUP~~w~ Utiliser')
+            DisplayHelpTextFromStringLabel(0, 0, 0, -1)
+            if IsControlJustPressed(1, KeyTakeCall) then
+                startFixeCall(number)
+            end
+            break
+        end
+    end
+end
+
+
+Citizen.CreateThread(function ()
+    while true do
+        local playerPed   = PlayerPedId()
+        local coords      = GetEntityCoords(playerPed)
+        local inRangeToActivePhone = false
+        for i, _ in pairs(PhoneInCall) do
+            local dist = GetDistanceBetweenCoords(
+                PhoneInCall[i].coords.x, PhoneInCall[i].coords.y, PhoneInCall[i].coords.z,
+                coords.x, coords.y, coords.z, 1)
+            if (dist <= 5.0) then
+                DrawMarker(1, PhoneInCall[i].coords.x, PhoneInCall[i].coords.y, PhoneInCall[i].coords.z,
+                    0,0,0, 0,0,0, 0.1,0.1,0.1, 0,255,0,255, 0,0,0,0,0,0,0)
+                inRangeToActivePhone = true
+                if (dist <= 1.5) then
+                    SetTextComponentFormat("STRING")
+                    AddTextComponentString("~INPUT_PICKUP~ Décrocher")
+                    DisplayHelpTextFromStringLabel(0, 0, 1, -1)
+                    if IsControlJustPressed(1, KeyTakeCall) then
+                        PhonePlayCall(true)
+                        TakeAppel(PhoneInCall[i])
+                        PhoneInCall = {}
+                        StopSound(soundId)
+                    end
+                end
+                break
+            end
+        end
+        if inRangeToActivePhone == false then
+            showFixePhoneHelper(coords)
+        end
+        if inRangeToActivePhone == true and currentPlaySound == false then
+            PlaySound(soundId, "Remote_Ring", "Phone_SoundSet_Michael", 0, 0, 1)
+            currentPlaySound = true
+        elseif inRangeToActivePhone == false and currentPlaySound == true then
+            currentPlaySound = false
+            StopSound(soundId)
+        end
+        Citizen.Wait(0)
+    end
+end)
+
 --====================================================================================
 --
 --====================================================================================
-
-function UpMiniMapNotification(text)
-    SetNotificationTextEntry("STRING")
-    AddTextComponentString(text)
-    DrawNotification(0, 1)
-end
-
 Citizen.CreateThread(function()
-  while true do
-    Citizen.Wait(0)
 
-    if IsControlJustPressed(1, Keys['F10']) then
-      ESX.TriggerServerCallback('gcphone:getItemAmount', function(qtty)
-		  if qtty > 0 then
-          TooglePhone()
-          TriggerServerEvent("gcphone:allUpdate")
-        else
-          UpMiniMapNotification("Você não tem nenhum ~r~telefone~s~")
+        while true do
+            Citizen.Wait(0)
+            -- if IsControlJustPressed(1, KeyOpenClose) and GetLastInputMethod( 0 ) then
+			if IsControlJustPressed(1, KeyOpenClose) and GetLastInputMethod( 2 ) then -- keyboards return true, no keybord return false
+				TooglePhone()
+			end
+			
+			if IsControlJustPressed(1, KeyOpenClose) and GetLastInputMethod( 0 ) then
+				TooglePhone()
+			end
+            if menuIsOpen == true then
+                for _, value in ipairs(KeyToucheCloseEvent) do
+                    if IsControlJustPressed(1, value.code) then
+                        SendNUIMessage({keyUp = value.event})
+                    end
+                end
+            end
         end
-      end, 'phone')
-
-    end
-
-    if menuIsOpen == true then
-      DeadCheck()
-      for _, value in ipairs(KeyToucheCloseEvent) do
-        if IsControlJustPressed(1, value.code) then
-          Citizen.Trace('Event: ' .. value.event)
-          SendNUIMessage({keyUp = value.event})
-        end
-      end
-    end
-  end
 end)
 
-function DeadCheck()
-  local dead = IsEntityDead(GetPlayerPed(-1))
-  if dead ~= isDead then
-    isDead = dead
-    SendNUIMessage({event = 'updateDead', isDead = isDead})
-  end
-end
+RegisterNetEvent("gcPhone:forceOpenPhone")
+AddEventHandler("gcPhone:forceOpenPhone", function(_myPhoneNumber)
+    if menuIsOpen == false then
+        TooglePhone()
+    end
+end)
 
 --====================================================================================
 --  Events
 --====================================================================================
-RegisterNetEvent("gcphone:myPhoneNumber")
-AddEventHandler("gcphone:myPhoneNumber", function(_myPhoneNumber)
-  myPhoneNumber = _myPhoneNumber
-  SendNUIMessage({event = 'updateMyPhoneNumber', myPhoneNumber = myPhoneNumber})
+RegisterNetEvent("gcPhone:myPhoneNumber")
+AddEventHandler("gcPhone:myPhoneNumber", function(_myPhoneNumber)
+    myPhoneNumber = _myPhoneNumber
+    SendNUIMessage({event = 'updateMyPhoneNumber', myPhoneNumber = myPhoneNumber})
 end)
 
-RegisterNetEvent("gcphone:contactList")
-AddEventHandler("gcphone:contactList", function(_contacts)
-  SendNUIMessage({event = 'updateContacts', contacts = _contacts})
-  contacts = _contacts
+RegisterNetEvent("gcPhone:contactList")
+AddEventHandler("gcPhone:contactList", function(_contacts)
+    SendNUIMessage({event = 'updateContacts', contacts = _contacts})
+    contacts = _contacts
 end)
 
-RegisterNetEvent("gcphone:allMessage")
-AddEventHandler("gcphone:allMessage", function(allmessages)
-  SendNUIMessage({event = 'updateMessages', messages = allmessages})
-  messages = allmessages
+RegisterNetEvent("gcPhone:allMessage")
+AddEventHandler("gcPhone:allMessage", function(allmessages)
+    SendNUIMessage({event = 'updateMessages', messages = allmessages})
+    messages = allmessages
 end)
 
-RegisterNetEvent("gcphone:receiveMessage")
-AddEventHandler("gcphone:receiveMessage", function(message)
-  table.insert(messages, message)
-  SendNUIMessage({event = 'updateMessages', messages = messages})
-  Citizen.Trace('sendMessage: ' .. json.encode(messages))
+RegisterNetEvent("gcPhone:getBourse")
+AddEventHandler("gcPhone:getBourse", function(bourse)
+    SendNUIMessage({event = 'updateBourse', bourse = bourse})
+end)
+
+RegisterNetEvent("gcPhone:receiveMessage")
+AddEventHandler("gcPhone:receiveMessage", function(message)
+    -- SendNUIMessage({event = 'updateMessages', messages = messages})
+    SendNUIMessage({event = 'newMessage', message = message})
     if message.owner == 0 then
-        SetNotificationTextEntry("STRING");
-        AddTextComponentString(message.message);
-		TriggerEvent('InteractSound_CL:PlayOnOne', 'demo', 1.0)
-        SetNotificationMessage("CHAR_CHAT_CALL", "CHAR_CHAT_CALL", false, 1, "~y~Nova mensagem: ~s~", "");
-        DrawNotification(false, true);
-        --SetNotificationTextEntry("STRING")
-        --AddTextComponentString('~o~Nouveau message')
-        --DrawNotification(false, false)
+        local text = '~o~Nouveau message'
+        if ShowNumberNotification == true then
+            text = '~o~Nouveau message du ~y~'.. message.transmitter
+            for _,contact in pairs(contacts) do
+                if contact.number == message.transmitter then
+                    text = '~o~Nouveau message de ~g~'.. contact.display
+                    break
+                end
+            end
+        end
+        SetNotificationTextEntry("STRING")
+        AddTextComponentString(text)
+        DrawNotification(false, false)
         PlaySound(-1, "Menu_Accept", "Phone_SoundSet_Default", 0, 0, 1)
         Citizen.Wait(300)
         PlaySound(-1, "Menu_Accept", "Phone_SoundSet_Default", 0, 0, 1)
         Citizen.Wait(300)
         PlaySound(-1, "Menu_Accept", "Phone_SoundSet_Default", 0, 0, 1)
     end
-end)
-
-RegisterNetEvent("OpenTel")
-AddEventHandler("OpenTel", function()
-
-  menuIsOpen = true
-
-  if menuIsOpen == true then
-    Citizen.Trace('open')
-    ePhoneInAnim()
-    Wait(1000)
-    SendNUIMessage({show = menuIsOpen})
-  else
-    ePhoneOutAnim()
-  end
-  --ShowNotificationMenuCivil2("~h~~g~TooglePhone !")
-end)
-
-function ShowNotificationMenuCivil2(text)
-  SetNotificationTextEntry("STRING")
-  AddTextComponentString(text)
-  DrawNotification(false, false)
-end
-
-RegisterNetEvent('esx:setAccountMoney')
-AddEventHandler('esx:setAccountMoney', function(account)
-  if account.name == 'bank' then
-    SendNUIMessage({event = 'updateBankbalance', banking = account.money})
-  end
 end)
 
 --====================================================================================
 --  Function client | Contacts
 --====================================================================================
+
 function addContact(display, num)
-    TriggerServerEvent('gcphone:addContact', display, num)
+    TriggerServerEvent('gcPhone:addContact', display, num)
 end
 
 function deleteContact(num)
-    TriggerServerEvent('gcphone:deleteContact', num)
+    TriggerServerEvent('gcPhone:deleteContact', num)
 end
+
 --====================================================================================
 --  Function client | Messages
 --====================================================================================
 function sendMessage(num, message)
-  TriggerServerEvent('gcphone:sendMessage', num, message)
+    TriggerServerEvent('gcPhone:sendMessage', num, message)
 end
 
 function deleteMessage(msgId)
-  Citizen.Trace('deleteMessage' .. msgId)
-  TriggerServerEvent('gcphone:deleteMessage', msgId)
-  for k, v in ipairs(messages) do
-    if v.id == msgId then
-      table.remove(messages, k)
-      SendNUIMessage({event = 'updateMessages', messages = messages})
-      return
+    TriggerServerEvent('gcPhone:deleteMessage', msgId)
+    for k, v in ipairs(messages) do
+        if v.id == msgId then
+            table.remove(messages, k)
+            SendNUIMessage({event = 'updateMessages', messages = messages})
+            return
+        end
     end
-  end
 end
 
 function deleteMessageContact(num)
-  TriggerServerEvent('gcphone:deleteMessageNumber', num)
+    TriggerServerEvent('gcPhone:deleteMessageNumber', num)
 end
 
 function deleteAllMessage()
-  TriggerServerEvent('gcphone:deleteAllMessage')
+    TriggerServerEvent('gcPhone:deleteAllMessage')
 end
 
 function setReadMessageNumber(num)
-  TriggerServerEvent('gcphone:setReadMessageNumber', num)
-  for k, v in ipairs(messages) do
-    if v.transmitter == num then
-      v.isRead = true
+    TriggerServerEvent('gcPhone:setReadMessageNumber', num)
+    for k, v in ipairs(messages) do
+        if v.transmitter == num then
+            v.isRead = 1
+        end
     end
-  end
 end
 
 function requestAllMessages()
-  TriggerServerEvent('gcphone:requestAllMessages')
+    TriggerServerEvent('gcPhone:requestAllMessages')
 end
 
 function requestAllContact()
-  TriggerServerEvent('gcphone:requestAllContact')
+    TriggerServerEvent('gcPhone:requestAllContact')
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 --====================================================================================
 --  Function client | Appels
 --====================================================================================
+
 local inCall = false
 local aminCall = false
 
-RegisterNetEvent("gcphone:waitingCall")
-AddEventHandler("gcphone:waitingCall", function(infoCall)
-  SendNUIMessage({event = 'waitingCall', infoCall = infoCall})
-  if infoCall.transmitter_num == myPhoneNumber then
-    aminCall = true
-    ePhoneStartCall()
-  end
+RegisterNetEvent("gcPhone:waitingCall")
+AddEventHandler("gcPhone:waitingCall", function(infoCall, initiator)
+    SendNUIMessage({event = 'waitingCall', infoCall = infoCall, initiator = initiator})
+    print('---------------------', initiator)
+    if initiator == true then
+        PhonePlayCall()
+        if menuIsOpen == false then
+            TooglePhone()
+        end
+    end
 end)
 
-RegisterNetEvent("gcphone:acceptCall")
-AddEventHandler("gcphone:acceptCall", function(infoCall)
-  if inCall == false then
-    inCall = true
-    NetworkSetVoiceChannel(infoCall.id + 1)
-    NetworkSetTalkerProximity(0.0)
-  end
-  if aminCall == false then
-    aminCall = true
-    ePhoneStartCall()
-  end
-  SendNUIMessage({event = 'acceptCall', infoCall = infoCall})
+RegisterNetEvent("gcPhone:acceptCall")
+AddEventHandler("gcPhone:acceptCall", function(infoCall, initiator)
+    if inCall == false and USE_RTC == false then
+        inCall = true
+        NetworkSetVoiceChannel(infoCall.id + 1)
+        NetworkSetTalkerProximity(0.0)
+    end
+    if menuIsOpen == false then
+        TooglePhone()
+    end
+    PhonePlayCall()
+    SendNUIMessage({event = 'acceptCall', infoCall = infoCall, initiator = initiator})
 end)
 
-RegisterNetEvent("gcphone:rejectCall")
-AddEventHandler("gcphone:rejectCall", function(infoCall)
-  if inCall == true then
-    inCall = false
-    Citizen.InvokeNative(0xE036A705F989E049)
-    NetworkSetTalkerProximity(2.5)
-  end
-  if aminCall == true then
-    ePhoneStopCall()
-    aminCall = false
-  end
-  SendNUIMessage({event = 'rejectCall', infoCall = infoCall})
+RegisterNetEvent("gcPhone:rejectCall")
+AddEventHandler("gcPhone:rejectCall", function(infoCall)
+    if inCall == true then
+        inCall = false
+        Citizen.InvokeNative(0xE036A705F989E049)
+        NetworkSetTalkerProximity(2.5)
+    end
+    PhonePlayText()
+    SendNUIMessage({event = 'rejectCall', infoCall = infoCall})
 end)
 
-
-RegisterNetEvent("gcphone:historiqueCall")
-AddEventHandler("gcphone:historiqueCall", function(historique)
-  SendNUIMessage({event = 'historiqueCall', historique = historique})
+RegisterNetEvent("gcPhone:historiqueCall")
+AddEventHandler("gcPhone:historiqueCall", function(historique)
+    SendNUIMessage({event = 'historiqueCall', historique = historique})
 end)
-
-function startCall (phone_number)
-  TriggerServerEvent('gcphone:startCall', phone_number)
-end
-
-function acceptCall (infoCall)
-  TriggerServerEvent('gcphone:acceptCall', infoCall)
-end
 
 function rejectCall(infoCall)
-  TriggerServerEvent('gcphone:rejectCall', infoCall)
+    TriggerServerEvent('gcPhone:rejectCall', infoCall)
 end
 
 function ignoreCall(infoCall)
-  TriggerServerEvent('gcphone:ignoreCall', infoCall)
+    TriggerServerEvent('gcPhone:ignoreCall', infoCall)
 end
 
 function requestHistoriqueCall()
-  TriggerServerEvent('gcphone:getHistoriqueCall')
+    TriggerServerEvent('gcPhone:getHistoriqueCall')
 end
 
 function appelsDeleteHistorique (num)
-  TriggerServerEvent('gcphone:appelsDeleteHistorique', num)
+    TriggerServerEvent('gcPhone:appelsDeleteHistorique', num)
 end
 
 function appelsDeleteAllHistorique ()
-  TriggerServerEvent('gcphone:appelsDeleteAllHistorique')
+    TriggerServerEvent('gcPhone:appelsDeleteAllHistorique')
 end
 
 
 --====================================================================================
---  Event - Appels
+--  Event NUI - Appels
 --====================================================================================
-
+function startCall (phone_number, rtcOffer, extraData)
+    TriggerServerEvent('gcPhone:startCall', phone_number, rtcOffer, extraData)
+end
 RegisterNUICallback('startCall', function (data, cb)
-  startCall(data.numero)
-  cb()
+    print(json.encode(data))
+    startCall(data.numero, data.rtcOffer, data.extraData)
+    cb()
 end)
 
+function acceptCall (infoCall, rtcAnswer)
+    TriggerServerEvent('gcPhone:acceptCall', infoCall, rtcAnswer)
+end
 RegisterNUICallback('acceptCall', function (data, cb)
-  acceptCall(data.infoCall)
-  cb()
+    acceptCall(data.infoCall, data.rtcAnswer)
+    cb()
 end)
-
 RegisterNUICallback('rejectCall', function (data, cb)
-  rejectCall(data.infoCall)
-  cb()
+    rejectCall(data.infoCall)
+    cb()
 end)
 
 RegisterNUICallback('ignoreCall', function (data, cb)
-  ignoreCall(data.infoCall)
-  cb()
+    ignoreCall(data.infoCall)
+    cb()
 end)
 
-RegisterNUICallback('appelsDeleteHistorique', function (data, cb)
-  appelsDeleteHistorique(data.numero)
-  cb()
+RegisterNUICallback('notififyUseRTC', function (use, cb)
+    USE_RTC = use
+    if USE_RTC == true and inCall == true then
+        print('USE RTC ON')
+        inCall = false
+        Citizen.InvokeNative(0xE036A705F989E049)
+        NetworkSetTalkerProximity(2.5)
+    end
+    cb()
 end)
 
-RegisterNUICallback('appelsDeleteAllHistorique', function (data, cb)
-  appelsDeleteAllHistorique(data.infoCall)
-  cb()
+RegisterNUICallback('onCandidates', function (data, cb)
+    TriggerServerEvent('gcPhone:candidates', data.id, data.candidates)
+    cb()
 end)
 
+RegisterNetEvent("gcPhone:candidates")
+AddEventHandler("gcPhone:candidates", function(candidates)
+    SendNUIMessage({event = 'candidatesAvailable', candidates = candidates})
+end)
 
+RegisterNetEvent('gcphone:autoCall')
+AddEventHandler('gcphone:autoCall', function(number, extraData)
+    if number ~= nil then
+        print('number', number)
+        SendNUIMessage({ event = "autoStartCall", number = number, extraData = extraData})
+    end
+end)
 
+RegisterNetEvent('gcphone:autoCallNumber')
+AddEventHandler('gcphone:autoCallNumber', function(data)
+    TriggerEvent('gcphone:autoCall', data.number)
+end)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+RegisterNetEvent('gcphone:autoAcceptCall')
+AddEventHandler('gcphone:autoAcceptCall', function(infoCall)
+    SendNUIMessage({ event = "autoAcceptCall", infoCall = infoCall})
+end)
 
 --====================================================================================
 --  Gestion des evenements NUI
 --====================================================================================
-function tprint (t, s)
-  for k, v in pairs(t) do
-      local kfmt = '["' .. tostring(k) ..'"]'
-      if type(k) ~= 'string' then
-          kfmt = '[' .. k .. ']'
-      end
-      local vfmt = '"'.. tostring(v) ..'"'
-      if type(v) == 'table' then
-          tprint(v, (s or '')..kfmt)
-      else
-          if type(v) ~= 'string' then
-              vfmt = tostring(v)
-          end
-          print(type(t)..(s or '')..kfmt..' = '..vfmt)
-      end
-  end
-end
 RegisterNUICallback('log', function(data, cb)
-  -- print(data)
-  -- tprint(data)
-  cb()
+    print(data)
+    cb()
 end)
 RegisterNUICallback('focus', function(data, cb)
-  cb()
+    cb()
 end)
 RegisterNUICallback('blur', function(data, cb)
-  cb()
+    cb()
 end)
 RegisterNUICallback('reponseText', function(data, cb)
-  local limit = data.limit or 255
-  local text = data.text or ''
+    local limit = data.limit or 255
+    local text = data.text or ''
 
-  DisplayOnscreenKeyboard(1, "FMMC_MPM_NA", "", text, "", "", "", limit)
-  while (UpdateOnscreenKeyboard() == 0) do
-      DisableAllControlActions(0);
-      Wait(0);
-  end
-  if (GetOnscreenKeyboardResult()) then
-      text = GetOnscreenKeyboardResult()
-  end
-  cb(json.encode({text = text}))
+    DisplayOnscreenKeyboard(1, "FMMC_MPM_NA", "", text, "", "", "", limit)
+    while (UpdateOnscreenKeyboard() == 0) do
+        DisableAllControlActions(0);
+        Wait(0);
+    end
+    if (GetOnscreenKeyboardResult()) then
+        text = GetOnscreenKeyboardResult()
+    end
+    cb(json.encode({text = text}))
 end)
+
 --====================================================================================
 --  Event - Messages
 --====================================================================================
 RegisterNUICallback('getMessages', function(data, cb)
-  cb(json.encode(messages))
+    cb(json.encode(messages))
 end)
 RegisterNUICallback('sendMessage', function(data, cb)
-  if data.message == '%pos%' then
-    local myPos = GetEntityCoords(GetPlayerPed(-1))
-    data.message = 'GPS: ' .. myPos.x .. ', ' .. myPos.y
-  end
-  TriggerServerEvent('gcphone:sendMessage', data.phoneNumber, data.message)
+    if data.message == '%pos%' then
+        local myPos = GetEntityCoords(PlayerPedId())
+        data.message = 'GPS: ' .. myPos.x .. ', ' .. myPos.y
+    end
+    TriggerServerEvent('gcPhone:sendMessage', data.phoneNumber, data.message)
 end)
 RegisterNUICallback('deleteMessage', function(data, cb)
-  deleteMessage(data.id)
-  cb()
+    deleteMessage(data.id)
+    cb()
 end)
 RegisterNUICallback('deleteMessageNumber', function (data, cb)
-  deleteMessageContact(data.number)
-  cb()
+    deleteMessageContact(data.number)
+    cb()
 end)
 RegisterNUICallback('deleteAllMessage', function (data, cb)
-  deleteAllMessage()
-  cb()
+    deleteAllMessage()
+    cb()
 end)
 RegisterNUICallback('setReadMessageNumber', function (data, cb)
-  setReadMessageNumber(data.number)
-  cb()
+    setReadMessageNumber(data.number)
+    cb()
 end)
 --====================================================================================
 --  Event - Contacts
 --====================================================================================
 RegisterNUICallback('addContact', function(data, cb)
-  TriggerServerEvent('gcphone:addContact', data.display, data.phoneNumber)
+    TriggerServerEvent('gcPhone:addContact', data.display, data.phoneNumber)
 end)
-
 RegisterNUICallback('updateContact', function(data, cb)
-  TriggerServerEvent('gcphone:updateContact', data.id, data.display, data.phoneNumber)
+    TriggerServerEvent('gcPhone:updateContact', data.id, data.display, data.phoneNumber)
 end)
-
 RegisterNUICallback('deleteContact', function(data, cb)
-  TriggerServerEvent('gcphone:deleteContact', data.id)
+    TriggerServerEvent('gcPhone:deleteContact', data.id)
 end)
-
 RegisterNUICallback('getContacts', function(data, cb)
-  cb(json.encode(contacts))
+    cb(json.encode(contacts))
 end)
-
 RegisterNUICallback('setGPS', function(data, cb)
-  SetNewWaypoint(tonumber(data.x), tonumber(data.y))
-  cb()
+    SetNewWaypoint(tonumber(data.x), tonumber(data.y))
+    cb()
 end)
 RegisterNUICallback('callEvent', function(data, cb)
-  local plyPos = GetEntityCoords(GetPlayerPed(-1), true)
-  if data.eventName ~= 'cancel' then
     if data.data ~= nil then
-      --TriggerServerEvent("call:makeCall", "police", {x=plyPos.x,y=plyPos.y,z=plyPos.z},ResultMotifAdd,GetPlayerServerId(player))
-      TriggerServerEvent("call:makeCall", data.eventName, {x=plyPos.x,y=plyPos.y,z=plyPos.z}, data.data, GetPlayerServerId(player))
-      if data.eventName == "police" then
-        ShowNotificationMenuCivil2("~h~Você ligou para a ~b~Police")
-      elseif data.eventName == "taxi" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Taxi")
-      elseif data.eventName == "mecano" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Mécano")
-      elseif data.eventName == "journaliste" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Journaliste")
-      elseif data.eventName == "ambulance" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Ambulancier")
-      elseif data.eventName == "unicorn" then
-        ShowNotificationMenuCivil2("~h~Você ligou para a ~b~Unicorn")
-	  elseif data.eventName == "state" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~agent du Gouvernement")
-	  elseif data.eventName == "pilot" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Pilot")
-	  elseif data.eventName == "fib" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~agent du FBI")
-	  elseif data.eventName == "army" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Millitaire")
-	  elseif data.eventName == "realestateagent" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Agent Immobillier")
-	  elseif data.eventName == "pilot" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Pilot")
-	  elseif data.eventName == "epicerie" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Épicier")
-	  elseif data.eventName == "brinks" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~agent de la Brinks")
-	  elseif data.eventName == "bahama" then
-        ShowNotificationMenuCivil2("~h~Você ligou para a ~b~Bahama mamas")
-      end
-
-
-
-
+        TriggerEvent(data.eventName, data.data)
     else
-      local limit = data.limit or 255
-      local text = data.text or ''
-      if data.eventName ~= "RESPAWN" then
-        DisplayOnscreenKeyboard(1, "FMMC_MPM_NA", "", text, "", "", "", limit)
-        while (UpdateOnscreenKeyboard() == 0) do
-            DisableAllControlActions(0);
-            Wait(0);
-        end
-        if (GetOnscreenKeyboardResult()) then
-            text = GetOnscreenKeyboardResult()
-        end
-        TriggerServerEvent("call:makeCall", data.eventName, {x=plyPos.x,y=plyPos.y,z=plyPos.z}, text, GetPlayerServerId(player))
-      if data.eventName == "police" then
-        ShowNotificationMenuCivil2("~h~Você ligou para a ~b~Police")
-      elseif data.eventName == "taxi" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Taxi")
-      elseif data.eventName == "mecano" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Mécano")
-      elseif data.eventName == "journaliste" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Journaliste")
-      elseif data.eventName == "ambulance" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Ambulancier")
-      elseif data.eventName == "unicorn" then
-        ShowNotificationMenuCivil2("~h~Você ligou para a ~b~Unicorn")
-	  elseif data.eventName == "state" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~agent du Gouvernement")
-	  elseif data.eventName == "pilot" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Pilot")
-	  elseif data.eventName == "fib" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~agent du FBI")
-	  elseif data.eventName == "army" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Millitaire")
-	  elseif data.eventName == "realestateagent" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Agent Immobillier")
-	  elseif data.eventName == "pilot" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Pilot")
-	  elseif data.eventName == "epicerie" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~Épicier")
-	  elseif data.eventName == "brinks" then
-        ShowNotificationMenuCivil2("~h~Você chamou um ~b~agent de la Brinks")
-	  elseif data.eventName == "bahama" then
-        ShowNotificationMenuCivil2("~h~Você ligou para a ~b~Bahama mamas")
-      end
-      else
-        TriggerEvent('esx_ambulancejob:heal')
-      end
+        TriggerEvent(data.eventName)
     end
     cb()
-  end
 end)
-
 RegisterNUICallback('deleteALL', function(data, cb)
-  TriggerServerEvent('gcphone:deleteALL')
-  cb()
+    TriggerServerEvent('gcPhone:deleteALL')
+    cb()
 end)
 
-RegisterNUICallback('callEvent', function(data, cb)
-  if data.data ~= nil then
-    TriggerEvent(data.eventName, data.data)
-  else
-    TriggerEvent(data.eventName)
-  end
-  cb()
-end)
+
 
 function TooglePhone()
-
-      menuIsOpen = not menuIsOpen
-      SendNUIMessage({show = menuIsOpen})
-      if menuIsOpen == true then
-        Citizen.Trace('open')
-        ePhoneInAnim()
-      else
-        ePhoneOutAnim()
-      end
-
-
+    menuIsOpen = not menuIsOpen
+    SendNUIMessage({show = menuIsOpen})
+    if menuIsOpen == true then
+        PhonePlayIn()
+    else
+        PhonePlayOut()
+    end
 end
+RegisterNUICallback('takePhoto', function(data, cb)
+    menuIsOpen = false
+    SendNUIMessage({show = false})
+    cb()
+    TriggerEvent('camera:open')
+end)
 
 RegisterNUICallback('closePhone', function(data, cb)
-  menuIsOpen = false
-  SendNUIMessage({show = false})
-  ePhoneOutAnim()
-  cb()
+    menuIsOpen = false
+    SendNUIMessage({show = false})
+    PhonePlayOut()
+    cb()
 end)
 
-RegisterNUICallback('takePhoto', function(data, cb)
-  menuIsOpen = false
-  SendNUIMessage({show = false})
-  cb()
-  TriggerEvent('camera:open')
+
+
+
+----------------------------------
+---------- GESTION APPEL ---------
+----------------------------------
+RegisterNUICallback('appelsDeleteHistorique', function (data, cb)
+    appelsDeleteHistorique(data.numero)
+    cb()
 end)
+RegisterNUICallback('appelsDeleteAllHistorique', function (data, cb)
+    appelsDeleteAllHistorique(data.infoCall)
+    cb()
+end)
+
+
+----------------------------------
+---------- GESTION VIA WEBRTC ----
+----------------------------------
+AddEventHandler('onClientResourceStart', function(res)
+    DoScreenFadeIn(300)
+    if res == "gcphone" then
+        TriggerServerEvent('gcPhone:allUpdate')
+    end
+end)
+
