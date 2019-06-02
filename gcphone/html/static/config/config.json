@@ -62,25 +62,25 @@
 
 	"serviceCall": [
 		{
-			"display": "Agent immobilier",
+			"display": "Agente imobiliário",
 			"backgroundColor": "pink",
 			"subMenu": [
 				{
-					"title": "Envoyer un message",
+					"title": "Envie uma mensagem",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "realestateagent"
 					}
 				},
 				{
-					"title": "Rendez-vous location",
+					"title": "Go aluguel casas",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "realestateagent"
 					}
 				},
 				{
-					"title": "Rendez-vous achat",
+					"title": "Fazer compras casas",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "realestateagent"
@@ -89,11 +89,11 @@
 			]
 		},
 		{
-			"display": "Ambulance",
+			"display": "Ambulância",
 			"backgroundColor": "red",
 			"subMenu": [
 				{
-					"title": "Envoyer un message",
+					"title": "Envie uma mensagem",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "ambulance"
@@ -102,11 +102,11 @@
 			]
 		},
 		{
-			"display": "Concessionnaire",
+			"display": "Concessionária",
 			"backgroundColor": "green",
 			"subMenu": [
 				{
-					"title": "Envoyer un message",
+					"title": "Envie uma mensagem",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "cardealer"
@@ -127,7 +127,7 @@
 			"backgroundColor": "grey",
 			"subMenu": [
 				{
-					"title": "Envoyer un message",
+					"title": "Envie uma mensagem",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "mecano"
@@ -168,37 +168,37 @@
 			]
 		},
 		{
-			"display": "Police",
+			"display": "Polícia",
 			"backgroundColor": "blue",
 			"subMenu": [
 				{
-					"title": "Envoyer un message",
+					"title": "Envie uma mensagem",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "police"
 					}
 				},
 				{
-					"title": "Appeler le standard",
+					"title": "Ligue para o padrão",
 					"eventName": "gcphone:autoCallNumber",
 					"type": {
 						"number": "911"
 					}
 				},
 				{
-					"title": "Signaler un vol",
+					"title": "Comunicar um voo",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "police",
-						"message": "Vol en cours, merci de venir au plus vite !"
+						"message": "Vôo em progresso, obrigado por vir em breve!"
 					}
 				},
 				{
-					"title": "Signaler une agression",
+					"title": "Denunciar um assalto",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "police",
-						"message": "Victime d'agression"
+						"message": "Vítima de agressão"
 					}
 				}
 			]
@@ -208,26 +208,26 @@
 			"backgroundColor": "yellow",
 			"subMenu": [
 				{
-					"title": "Envoyer un message",
+					"title": "Envie uma mensagem",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "taxi"
 					}
 				},
 				{
-					"title": "Course rapide",
+					"title": "Corrida rápida taxi",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "taxi",
-						"message": "Bonjour, serait-il possible de venir me prendre pour une course rapide ?"
+						"message": "Olá, seria possível vir para mim para uma corrida rápida?"
 					}
 				},
 				{
-					"title": "Course longue",
+					"title": "Corrida longa taxi",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "taxi",
-						"message": "Bonjour, serait-il possible de venir me prendre pour une course qui risque de durer ?"
+						"message": "Olá, seria possível vir me levar para uma corrida que pode durar?"
 					}
 				}
 			]
@@ -236,32 +236,32 @@
 
 	"apps": [
 		{
-			"name": "Téléphone",
+			"name": "Telefone",
 			"icons": "/html/static/img/icons_app/call.png",
 			"routeName": "appels",
 			"inHomePage": true
 		},
 		{
-			"name": "Messages",
+			"name": "Mensagens",
 			"icons": "/html/static/img/icons_app/sms.png",
 			"routeName": "messages",
 			"inHomePage": true,
 			"puceRef": "nbMessagesUnread"
 		},
 		{
-			"name": "Contacts",
+			"name": "Contatos",
 			"icons": "/html/static/img/icons_app/contacts.png",
 			"routeName": "contacts",
 			"inHomePage": true
 		},
 		{
-			"name": "Paramètres",
+			"name": "Configurações",
 			"icons": "/html/static/img/icons_app/settings.png",
 			"routeName": "parametre",
 			"inHomePage": true
 		},
 		{
-			"name": "Bank",
+			"name": "Banco",
 			"icons": "/html/static/img/icons_app/bank.png",
 			"routeName": "bank",
 			"inHomePage": false
@@ -273,7 +273,7 @@
 			"enabled": true
 		},
 		{
-			"name": "Photo",
+			"name": "Fotos",
 			"icons": "/html/static/img/icons_app/photo.png",
 			"routeName": "photo"
 		},
