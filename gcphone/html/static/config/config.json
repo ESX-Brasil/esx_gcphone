@@ -1,6 +1,6 @@
 {
 	"reseau": "Orange",
-  
+
 	"themeColor": "#303f9f",
 	"colors": [
 		"#EF5350",
@@ -22,11 +22,11 @@
 		"#78909C"
 	],
 
-	"//": "Si false, Ajoute un '-' dans le numero (###-####)",
+	"//": "Se falso, adicione um '-' no número (###-####)",
 	"useFormatNumberFrance": false,
 
-	"//": "useWebRTCVocal: false => Appels avec channels de GTA",
-	"//": "useWebRTCVocal: true  => Appels avec WebRTC",
+	"//": "useWebRTCVocal: false => Chamadas com canais GTA",
+	"//": "useWebRTCVocal: true  => Chamadas com o WebRTC",
 	"useWebRTCVocal": false,
 	"RTCConfig": {
 		"iceServers": [{
@@ -99,7 +99,7 @@
 						"number": "ambulance"
 					}
 				}
-			]		
+			]
 		},
 		{
 			"display": "Concessionnaire",
