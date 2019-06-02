@@ -113,11 +113,11 @@
 					}
 				},
 				{
-					"title": "Rendez-vous vente véhicule",
+					"title": "vendas de veículos novos",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "cardealer",
-						"message": "Bonjour, serait-il possible de prendre rendez-vous avec vous pour l'achat d'un véhicule ?"
+						"message": "Olá, seria possível marcar uma consulta com você para a compra de um veículo? "
 					}
 				}
 			]
@@ -134,35 +134,35 @@
 					}
 				},
 				{
-					"title": "Camion en panne",
+					"title": "Caminhão quebrador",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "mecano",
-						"message": "Bonjour, mon camion est en panne. Pouvez-vous intervenir ?"
+						"message": "Olá meu Caminhão está em quebrador. Você pode arruma-lo?"
 					}
 				},
 				{
-					"title": "Voiture en panne",
+					"title": "Carro quebrador",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "mecano",
-						"message": "Bonjour, ma voiture est en panne. Pouvez-vous intervenir ?"
+						"message": "Olá, meu carro está quebrador. Você pode arruma-lo?"
 					}
 				},
 				{
-					"title": "Moto en panne",
+					"title": "Moto quebradar",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "mecano",
-						"message": "Bonjour, ma moto est en panne. Pouvez-vous intervenir ?"
+						"message": "Olá, minha moto está quebradar. Você pode arruma-la?"
 					}
 				},
 				{
-					"title": "Accident",
+					"title": "Acidente",
 					"eventName": "esx_addons_gcphone:call",
 					"type": {
 						"number": "mecano",
-						"message": "Bonjour, un accident a eu lieu. Pouvez-vous intervenir ?"
+						"message": "Olá, um acidente ocorreu. Você pode intervir?"
 					}
 				}
 			]
@@ -179,7 +179,7 @@
 					}
 				},
 				{
-					"title": "Ligue para o padrão",
+					"title": "Ligue para o plantão da policia",
 					"eventName": "gcphone:autoCallNumber",
 					"type": {
 						"number": "911"

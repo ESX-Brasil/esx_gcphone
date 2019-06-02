@@ -900,13 +900,13 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
     var o = n(0)(n(78), n(224), s, null, null);
     t.exports = o.exports
 }, , function(t, e) {
-    t.exports = ["à l'instant", ["il y a %s seconde", "il y a %s secondes"],
-        ["il y a %s minute", "il y a %s minutes"],
-        ["il y a %s heure", "il y a %s heures"],
-        ["il y a %s jour", "il y a %s jours"],
-        ["il y a %s semaine", "il y a %s semaines"],
-        ["il y a %s mois", "il y a %s mois"],
-        ["il y a %s an", "il y a %s ans"]
+    t.exports = ["no momento", ["há segundo %s", "há segundos %s"],
+        ["há minuto %s", "há minutos %s"],
+        ["há tempo %s", "há tempo %s"],
+        ["há dia %s", "há dias %s"],
+        ["há semana %s", "há semanas %s"],
+        ["há mês %s", "há meses %s"],
+        ["há ano %s", "há anos %s"]
     ]
 }, function(t, e, n) {
     "use strict";
@@ -1105,9 +1105,9 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
         l = n(12);
     s.a.use(u.a, {
         name: "timeago",
-        locale: "fr-FR",
+        locale: "pt-BR",
         locales: {
-            "fr-FR": n(68)
+            "pt-BR": n(68)
         }
     }), s.a.config.productionTip = !1, s.a.prototype.$bus = new s.a, s.a.prototype.$phoneAPI = l.a, window.DDD = r.a, new s.a({
         el: "#app",
@@ -1134,11 +1134,11 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 return t.appelsInfo
             },
             appelsDisplayName: function(t, e) {
-                if (!0 === t.appelsInfo.hidden) return "Appels masqué";
+                if (!0 === t.appelsInfo.hidden) return "Chamadas mascaradas";
                 var n = e.appelsDisplayNumber;
                 return (e.contacts.find(function(t) {
                     return t.number === n
-                }) || {}).display || "Inconnu"
+                }) || {}).display || "Desconhecido"
             },
             appelsDisplayNumber: function(t, e) {
                 return !0 === e.isInitiatorCall ? t.appelsInfo.receiver_num : !0 === t.appelsInfo.hidden ? "###-####" : t.appelsInfo.transmitter_num
@@ -1380,7 +1380,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
             zoom: window.localStorage.gc_zoom || "100%",
             volume: parseFloat(window.localStorage.gc_volume) || 1,
             config: {
-                reseau: "Gannon",
+                reseau: "ESX-Brasil",
                 useFormatNumberFrance: !1,
                 apps: [],
                 themeColor: "#2A56C6",
@@ -1801,15 +1801,15 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
             return {
                 subMenu: [{
                     Comp: u.a,
-                    name: "Favoris",
+                    name: "Favoritos",
                     icon: "star"
                 }, {
                     Comp: f.a,
-                    name: "Récents",
+                    name: "Recente",
                     icon: "clock-o"
                 }, {
                     Comp: h.a,
-                    name: "Contacts",
+                    name: "Contatos",
                     icon: "user"
                 }],
                 currentMenuIndex: 1
@@ -1858,7 +1858,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
         data: function() {
             return {
                 numero: "###-####",
-                contactName: "Inconnu",
+                contactName: "Desconhecido",
                 time: -1,
                 intervalNum: void 0,
                 select: -1,
@@ -1933,7 +1933,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
         u = n(23),
         l = n.n(u);
     e.default = {
-        name: "Contacts",
+        name: "Contatos",
         components: {
             List: l.a
         },
@@ -1952,7 +1952,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
         computed: i()({}, n.i(r.b)(["contacts"]), {
             contactsList: function() {
                 return [{
-                    display: "Entre un numero",
+                    display: "Entre com um número",
                     letter: "#",
                     backgroundColor: "#D32F2F",
                     custom: !0
@@ -1978,7 +1978,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
         u = n.n(c),
         l = n(7);
     e.default = {
-        name: "Favoris",
+        name: "Favoritos",
         components: {
             List: u.a
         },
@@ -1997,10 +1997,10 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 var e = this;
                 !0 !== this.ignoreControls && (this.ignoreControls = !0, l.a.CreateModal({
                     choix: [].concat(o()(t.subMenu), [{
-                        title: "Retour"
+                        title: "Voltar"
                     }])
                 }).then(function(t) {
-                    e.ignoreControls = !1, "Retour" !== t.title && (e.$phoneAPI.callEvent(t.eventName, t.type), e.$router.push({
+                    e.ignoreControls = !1, "Voltar" !== t.title && (e.$phoneAPI.callEvent(t.eventName, t.type), e.$router.push({
                         name: "home"
                     }))
                 }))
@@ -2121,7 +2121,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
         p = n(18),
         f = n(7);
     e.default = {
-        name: "Recents",
+        name: "Recente",
         components: {},
         data: function() {
             return {
@@ -2163,21 +2163,21 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                             case 2:
                                 return n = t.historique[t.selectIndex].num, s = !1 === n.startsWith("#"), t.ignoreControls = !0, a = [{
                                     id: 1,
-                                    title: "Effacer",
+                                    title: "Apagar",
                                     icons: "fa-circle-o",
                                     color: "orange"
                                 }, {
                                     id: 2,
-                                    title: "Effacer TOUT.",
+                                    title: "Apagar TODOS.",
                                     icons: "fa-circle-o",
                                     color: "red"
                                 }, {
                                     id: 3,
-                                    title: "Retour",
+                                    title: "Voltar",
                                     icons: "fa-undo"
                                 }], !0 === s && (a = [{
                                     id: 0,
-                                    title: "Appeler",
+                                    title: "Chamada",
                                     icons: "fa-call-o"
                                 }].concat(i()(a))), e.next = 9, f.a.CreateModal({
                                     choix: a
@@ -2339,7 +2339,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 currentSelect: 0,
                 ignoreControls: !1,
                 contact: {
-                    display: "Nouveau Contact",
+                    display: "Novo contato",
                     number: "",
                     id: -1
                 }
@@ -2404,21 +2404,21 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 if (-1 !== this.id) {
                     this.ignoreControls = !0;
                     var e = [{
-                        title: "Annuler"
+                        title: "Cancelar"
                     }, {
-                        title: "Annuler"
+                        title: "Cancelar"
                     }, {
-                        title: "Supprimer",
+                        title: "Remover",
                         color: "red"
                     }, {
-                        title: "Annuler"
+                        title: "Cancelar"
                     }, {
-                        title: "Annuler"
+                        title: "Cancelar"
                     }];
                     c.a.CreateModal({
                         choix: e
                     }).then(function(e) {
-                        t.ignoreControls = !1, "Supprimer" === e.title && (t.$phoneAPI.deleteContact(t.id), history.back())
+                        t.ignoreControls = !1, "Remover" === e.title && (t.$phoneAPI.deleteContact(t.id), history.back())
                     })
                 } else history.back()
             }
@@ -2463,7 +2463,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
         computed: i()({}, n.i(r.b)(["contacts"]), {
             lcontacts: function() {
                 return [{
-                    display: "Ajouter un contact",
+                    display: "Adicionar um contato",
                     letter: "+",
                     num: "",
                     id: -1
@@ -2492,12 +2492,12 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 this.disableList = !0, h.a.CreateModal({
                     choix: [{
                         id: 1,
-                        title: "Modifier le contact",
+                        title: "Editar contato",
                         icons: "fa-circle-o",
                         color: "orange"
                     }, {
                         id: 3,
-                        title: "Annuler",
+                        title: "Cancelar",
                         icons: "fa-undo"
                     }]
                 }).then(function(n) {
@@ -2809,7 +2809,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
         computed: i()({}, n.i(u.b)(["contacts"]), {
             lcontacts: function() {
                 return [{
-                    display: "Enter un numero",
+                    display: "Digite um número",
                     letter: "+",
                     backgroundColor: "orange",
                     num: -1
@@ -2913,14 +2913,14 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                     s = /#([0-9]+)/.test(e.message),
                     a = this.isSMSImage(e),
                     i = [{
-                        title: "Effacer",
+                        title: "Apagar",
                         icons: "fa-circle-o"
                     }, {
-                        title: "Annuler",
+                        title: "Cancelar",
                         icons: "fa-undo"
                     }];
                 if (!0 === n && (i = [{
-                        title: "Position GPS",
+                        title: "Posição GPS",
                         icons: "fa-location-arrow"
                     }].concat(o()(i))), !0 === s) {
                     var r = e.message.match(/#([0-9-]*)/)[1];
@@ -2938,7 +2938,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                     if ("Effacer" === n.title) t.deleteMessage({
                         id: e.id
                     });
-                    else if ("Position GPS" === n.title) {
+                    else if ("Posição GPS" === n.title) {
                         var s = e.message.match(/((-?)\d+(\.\d+))/g);
                         t.$phoneAPI.setGPS(s[0], s[1])
                     } else void 0 !== n.number ? (t.phoneNumber = n.number, t.display = void 0) : "Zoom" === n.title && (t.imgZoom = e.message);
@@ -2955,14 +2955,14 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 var t = this;
                 !0 !== this.ignoreControls && -1 === this.selectMessage && (this.ignoreControls = !0, h.a.CreateModal({
                     choix: [{
-                        title: "Envoyer Coord GPS",
+                        title: "Envie o GPS Coord",
                         icons: "fa-location-arrow"
                     }, {
-                        title: "Annuler",
+                        title: "Cancelar",
                         icons: "fa-undo"
                     }]
                 }).then(function(e) {
-                    "Envoyer Coord GPS" === e.title && t.sendMessage({
+                    "Envie o GPS Coord" === e.title && t.sendMessage({
                         phoneNumber: t.phoneNumber,
                         message: "%pos%"
                     }), t.ignoreControls = !1
@@ -3030,7 +3030,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
             return {
                 nouveauMessage: {
                     backgroundColor: "#C0C0C0",
-                    display: "Nouveau message",
+                    display: "Nova mensagem",
                     letter: "+",
                     id: -1
                 },
@@ -3051,17 +3051,17 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 void 0 !== t.number && (this.disableList = !0, u.a.CreateModal({
                     choix: [{
                         id: 1,
-                        title: "Effacer la conversation",
+                        title: "Limpar a conversa",
                         icons: "fa-circle-o",
                         color: "orange"
                     }, {
                         id: 2,
-                        title: "Effacer toutes conv.",
+                        title: "Limpar todas as conv.",
                         icons: "fa-circle-o",
                         color: "red"
                     }, {
                         id: 3,
-                        title: "Annuler",
+                        title: "Cancelar",
                         icons: "fa-undo"
                     }]
                 }).then(function(n) {
@@ -3192,17 +3192,17 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
             paramList: function() {
                 return [{
                     icons: "fa-phone",
-                    title: "Mon numéro",
+                    title: "Meu numero",
                     value: this.myPhoneNumber
                 }, {
                     icons: "fa-picture-o",
-                    title: "Fond d'écran",
+                    title: "Papel de parede",
                     value: this.backgroundLabel,
                     onValid: "onChangeBackground",
                     values: this.config.background
                 }, {
                     icons: "fa-mobile",
-                    title: "Coque telephone",
+                    title: "Capa do telefone",
                     value: this.coqueLabel,
                     onValid: "onChangeCoque",
                     values: this.config.coque
@@ -3239,10 +3239,10 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 }, {
                     icons: "fa-exclamation-triangle",
                     color: "#c0392b",
-                    title: "Formater",
+                    title: "Formatação",
                     onValid: "resetPhone",
                     values: {
-                        "TOUT SUPPRIMER": "accept",
+                        "APAGAR TODOS": "accept",
                         Annuler: "cancel"
                     }
                 }]
@@ -3312,7 +3312,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                                     text: "https://i.imgur.com/"
                                 }).then(function(t) {
                                     "" !== t.text && void 0 !== t.text && null !== t.text && "https://i.imgur.com/" !== t.text && n.setBackground({
-                                        label: "Custom",
+                                        label: "Personalizado",
                                         value: t.text
                                     })
                                 }) : n.setBackground({
@@ -3357,21 +3357,21 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 if ("Annuler" !== e.title) {
                     this.ignoreControls = !0;
                     var s = [{
-                        title: "Annuler"
+                        title: "Cancelar"
                     }, {
-                        title: "Annuler"
+                        title: "Cancelar"
                     }, {
-                        title: "EFFACER",
+                        title: "LIMPAR",
                         color: "red"
                     }, {
-                        title: "Annuler"
+                        title: "Cancelar"
                     }, {
-                        title: "Annuler"
+                        title: "Cancelar"
                     }];
                     d.a.CreateModal({
                         choix: s
                     }).then(function(t) {
-                        n.ignoreControls = !1, "EFFACER" === t.title && n.$phoneAPI.deleteALL()
+                        n.ignoreControls = !1, "LIMPAR" === t.title && n.$phoneAPI.deleteALL()
                     })
                 }
             }
@@ -3496,17 +3496,17 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                             case 2:
                                 return t.ignoreControls = !0, n = [{
                                     id: 1,
-                                    title: "Ajouter un channel.",
+                                    title: "Adicione um canal.",
                                     icons: "fa-plus",
                                     color: "green"
                                 }, {
                                     id: 2,
-                                    title: "Effacer",
+                                    title: "Apagar",
                                     icons: "fa-circle-o",
                                     color: "orange"
                                 }, {
                                     id: 3,
-                                    title: "Retour",
+                                    title: "Voltar",
                                     icons: "fa-undo"
                                 }], 0 === t.tchatChannels.length && n.splice(1, 1), e.next = 7, l.a.CreateModal({
                                     choix: n
@@ -3544,12 +3544,12 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                                 }
                                 return t.ignoreControls = !0, n = [{
                                     id: 1,
-                                    title: "Ajouter un channel.",
+                                    title: "Adicione um canal.",
                                     icons: "fa-plus",
                                     color: "green"
                                 }, {
                                     id: 3,
-                                    title: "Retour",
+                                    title: "Voltar",
                                     icons: "fa-undo"
                                 }], e.next = 7, l.a.CreateModal({
                                     choix: n
@@ -3957,7 +3957,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 staticClass: "phone_app"
             }, [n("PhoneTitle", {
                 attrs: {
-                    title: "Téléphone"
+                    title: "Telefone"
                 }
             }), t._v(" "), n("div", {
                 staticClass: "content"
@@ -4150,7 +4150,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
             }, [n("input", {
                 attrs: {
                     type: "text",
-                    placeholder: "Envoyer un message"
+                    placeholder: "Envie uma mensagem"
                 }
             }), t._v(" "), n("span", {
                 staticClass: "tchat_send"
@@ -4200,7 +4200,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 staticClass: "highlight"
             }), t._v(" "), n("span", {
                 staticClass: "bar"
-            }), t._v(" "), n("label", [t._v("Nom - Prenom")])]), t._v(" "), n("div", {
+            }), t._v(" "), n("label", [t._v("Nome - primeiro nome")])]), t._v(" "), n("div", {
                 staticClass: "group inputText",
                 attrs: {
                     "data-type": "text",
@@ -4229,7 +4229,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 staticClass: "highlight"
             }), t._v(" "), n("span", {
                 staticClass: "bar"
-            }), t._v(" "), n("label", [t._v("Numéro")])]), t._v(" "), t._m(0), t._v(" "), t._m(1), t._v(" "), t._m(2)])], 1)
+            }), t._v(" "), n("label", [t._v("Número")])]), t._v(" "), t._m(0), t._v(" "), t._m(1), t._v(" "), t._m(2)])], 1)
         },
         staticRenderFns: [function() {
             var t = this,
@@ -4248,7 +4248,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 staticClass: "btn btn-green",
                 attrs: {
                     type: "button",
-                    value: "Enregistre"
+                    value: "Salva"
                 }
             })])
         }, function() {
@@ -4265,7 +4265,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 staticClass: "btn btn-orange",
                 attrs: {
                     type: "button",
-                    value: "Annuler"
+                    value: "Cancelar"
                 }
             })])
         }, function() {
@@ -4282,7 +4282,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 staticClass: "btn btn-red",
                 attrs: {
                     type: "button",
-                    value: "Supprimer"
+                    value: "Remover"
                 }
             })])
         }]
@@ -4337,7 +4337,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 }
             }, [n("InfoBare"), t._v(" "), t.messages.length >= 220 ? n("span", {
                 staticClass: "warningMess"
-            }, [t._v("Saturation mémoires !"), n("br"), t._v(t._s(t.messages.length) + " / 250")]) : t._e(), t._v(" "), n("div", {
+            }, [t._v("Memórias de saturação!"), n("br"), t._v(t._s(t.messages.length) + " / 250")]) : t._e(), t._v(" "), n("div", {
                 staticClass: "home_buttons"
             }, [t._l(t.AppsHome, function(e, s) {
                 return n("button", {
@@ -4375,7 +4375,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 staticClass: "phone_app"
             }, [n("PhoneTitle", {
                 attrs: {
-                    title: "Téléphone"
+                    title: "Telefone"
                 }
             }), t._v(" "), n("div", {
                 staticClass: "content"
@@ -4528,7 +4528,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 attrs: {
                     list: t.messagesData,
                     disable: t.disableList,
-                    title: "Messages"
+                    title: "Mensagens"
                 },
                 on: {
                     select: t.onSelect,
@@ -4757,7 +4757,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
                 attrs: {
                     list: t.lcontacts,
                     disable: t.disableList,
-                    title: "Contacts"
+                    title: "Contatos"
                 },
                 on: {
                     select: t.onSelect,
@@ -4778,7 +4778,7 @@ webpackJsonp([0], [, , , , , , function(t, e, n) {
             }, [n("list", {
                 attrs: {
                     list: t.lcontacts,
-                    title: "Contacts"
+                    title: "Contatos"
                 },
                 on: {
                     select: t.onSelect

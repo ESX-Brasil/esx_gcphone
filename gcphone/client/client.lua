@@ -1,5 +1,6 @@
 --====================================================================================
 -- #Author: Jonathan D @ Gannon
+-- #Tradução: Renildo Marcio
 --====================================================================================
 
 -- Configuration
@@ -25,7 +26,7 @@ local currentPlaySound = false
 local soundId = 1485
 
 --====================================================================================
---  Active ou Deactive une application (appName => config.json)
+--  Ativar ou desativar um aplicativo (appName => config.json)
 --====================================================================================
 
 RegisterNetEvent('gcPhone:setEnableApp')
@@ -34,7 +35,7 @@ AddEventHandler('gcPhone:setEnableApp', function(appName, enable)
 end)
 
 --====================================================================================
---  Gestion des appels fixe
+--  Gerenciamento de chamadas fixo
 --====================================================================================
 
 function startFixeCall (fixeNumber)
@@ -65,7 +66,7 @@ AddEventHandler("gcPhone:notifyFixePhoneChange", function(_PhoneInCall)
 end)
 
 --[[
-  Affiche les imformations quant le joueurs est proche d'un fixe
+  As informações contidas nos jogos estão sujeitas a uma correção
 --]]
 function showFixePhoneHelper (coords)
     for number, data in pairs(FixePhone) do
@@ -74,7 +75,7 @@ function showFixePhoneHelper (coords)
             coords.x, coords.y, coords.z, 1)
         if dist <= 2.0 then
             SetTextComponentFormat("STRING")
-            AddTextComponentString("~g~" .. data.name .. ' ~o~' .. number .. '~n~~INPUT_PICKUP~~w~ Utiliser')
+            AddTextComponentString("~g~" .. data.name .. ' ~o~' .. number .. '~n~~INPUT_PICKUP~~w~ Utilitário')
             DisplayHelpTextFromStringLabel(0, 0, 0, -1)
             if IsControlJustPressed(1, KeyTakeCall) then
                 startFixeCall(number)
@@ -137,7 +138,7 @@ Citizen.CreateThread(function()
 			if IsControlJustPressed(1, KeyOpenClose) and GetLastInputMethod( 2 ) then -- keyboards return true, no keybord return false
 				TooglePhone()
 			end
-			
+
 			if IsControlJustPressed(1, KeyOpenClose) and GetLastInputMethod( 0 ) then
 				TooglePhone()
 			end
@@ -542,4 +543,3 @@ AddEventHandler('onClientResourceStart', function(res)
         TriggerServerEvent('gcPhone:allUpdate')
     end
 end)
-
