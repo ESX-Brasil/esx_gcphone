@@ -1,6 +1,6 @@
 {
-	"reseau": "Orange",
-
+	"reseau": "ESX-Brasil",
+  
 	"themeColor": "#303f9f",
 	"colors": [
 		"#EF5350",
@@ -22,11 +22,11 @@
 		"#78909C"
 	],
 
-	"//": "Se falso, adicione um '-' no número (###-####)",
+	"//": "Si false, Ajoute un '-' dans le numero (###-####)",
 	"useFormatNumberFrance": false,
 
-	"//": "useWebRTCVocal: false => Chamadas com canais GTA",
-	"//": "useWebRTCVocal: true  => Chamadas com o WebRTC",
+	"//": "useWebRTCVocal: false => Appels avec channels de GTA",
+	"//": "useWebRTCVocal: true  => Appels avec WebRTC",
 	"useWebRTCVocal": false,
 	"RTCConfig": {
 		"iceServers": [{
@@ -37,15 +37,16 @@
 	},
 
 
-	"background" : {
-		"Calvin & Hobbes": "back001.jpg",
-		"Destiny": "back002.jpg",
-		"Stormtrooper": "back003.jpg"
-	},
-	"background_default": {
-		"label": "Stormtrooper",
-		"value": "back003.jpg"
-	},
+  "background" : {
+    "Calvin & Hobbes": "back001.jpg",
+    "Destiny": "back002.jpg",
+    "Stormtrooper": "back003.jpg",
+    "Custom URL": "URL"
+  },
+  "background_default": {
+    "label": "Calvin & Hobbes",
+    "value": "back001.jpg"
+  },
 
 
 	"coque": {
@@ -61,182 +62,89 @@
 
 
 	"serviceCall": [
-		{
-			"display": "Agente imobiliário",
-			"backgroundColor": "pink",
-			"subMenu": [
-				{
-					"title": "Envie uma mensagem",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "realestateagent"
-					}
-				},
-				{
-					"title": "Go aluguel casas",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "realestateagent"
-					}
-				},
-				{
-					"title": "Fazer compras casas",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "realestateagent"
-					}
-				}
-			]
-		},
-		{
-			"display": "Ambulância",
-			"backgroundColor": "red",
-			"subMenu": [
-				{
-					"title": "Envie uma mensagem",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "ambulance"
-					}
-				}
-			]
-		},
-		{
-			"display": "Concessionária",
-			"backgroundColor": "green",
-			"subMenu": [
-				{
-					"title": "Envie uma mensagem",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "cardealer"
-					}
-				},
-				{
-					"title": "vendas de veículos novos",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "cardealer",
-						"message": "Olá, seria possível marcar uma consulta com você para a compra de um veículo? "
-					}
-				}
-			]
-		},
-		{
-			"display": "Mécano",
-			"backgroundColor": "grey",
-			"subMenu": [
-				{
-					"title": "Envie uma mensagem",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "mecano"
-					}
-				},
-				{
-					"title": "Caminhão quebrador",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "mecano",
-						"message": "Olá meu Caminhão está em quebrador. Você pode arruma-lo?"
-					}
-				},
-				{
-					"title": "Carro quebrador",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "mecano",
-						"message": "Olá, meu carro está quebrador. Você pode arruma-lo?"
-					}
-				},
-				{
-					"title": "Moto quebradar",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "mecano",
-						"message": "Olá, minha moto está quebradar. Você pode arruma-la?"
-					}
-				},
-				{
-					"title": "Acidente",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "mecano",
-						"message": "Olá, um acidente ocorreu. Você pode intervir?"
-					}
-				}
-			]
-		},
-		{
-			"display": "Polícia",
-			"backgroundColor": "blue",
-			"subMenu": [
-				{
-					"title": "Envie uma mensagem",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "police"
-					}
-				},
-				{
-					"title": "Ligue para o plantão da policia",
-					"eventName": "gcphone:autoCallNumber",
-					"type": {
-						"number": "911"
-					}
-				},
-				{
-					"title": "Comunicar um voo",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "police",
-						"message": "Vôo em progresso, obrigado por vir em breve!"
-					}
-				},
-				{
-					"title": "Denunciar um assalto",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "police",
-						"message": "Vítima de agressão"
-					}
-				}
-			]
-		},
-		{
-			"display": "Taxi",
-			"backgroundColor": "yellow",
-			"subMenu": [
-				{
-					"title": "Envie uma mensagem",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "taxi"
-					}
-				},
-				{
-					"title": "Corrida rápida taxi",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "taxi",
-						"message": "Olá, seria possível vir para mim para uma corrida rápida?"
-					}
-				},
-				{
-					"title": "Corrida longa taxi",
-					"eventName": "esx_addons_gcphone:call",
-					"type": {
-						"number": "taxi",
-						"message": "Olá, seria possível vir me levar para uma corrida que pode durar?"
-					}
-				}
-			]
-		}
-	],
+    {
+      "display": "Departamento de Policia",
+      "backgroundColor": "blue",
+      "subMenu": [
+        {
+          "title": "Enviar Mensagem",
+          "eventName": "esx_addons_gcphone:call",
+          "type": {
+            "number": "police"
+          }
+        }
+      ]
+    },
+    {
+      "display": "Serviço de atendimento Medico",
+      "backgroundColor": "red",
+      "subMenu": [
+        {
+          "title": "Enviar Mensagem",
+          "eventName": "esx_addons_gcphone:call",
+          "type": {
+            "number": "ambulance"
+          }
+        }
+      ]
+    },
+	{
+      "display": "Advogado",
+      "backgroundColor": "Black",
+      "subMenu": [
+        {
+          "title": "Enviar Mensagem",
+          "eventName": "esx_addons_gcphone:call",
+          "type": {
+            "number": "advogado"
+          }
+        }
+      ]
+    },
+	{
+      "display": "Seviço de Mecânica",
+      "backgroundColor": "DimGrey",
+      "subMenu": [
+        {
+          "title": "Enviar Mensagem",
+          "eventName": "esx_addons_gcphone:call",
+          "type": {
+            "number": "mecano"
+          }
+        }
+      ]
+    },
+	{
+      "display": "Agencia de Taxi",
+      "backgroundColor": "Gold",
+      "subMenu": [
+        {
+          "title": "Enviar Mensagem",
+          "eventName": "esx_addons_gcphone:call",
+          "type": {
+            "number": "taxi"
+          }
+        }
+      ]
+    },
+	{
+      "display": "Agencia Bancaria",
+      "backgroundColor": "Green",
+      "subMenu": [
+        {
+          "title": "Enviar Mensagem",
+          "eventName": "esx_addons_gcphone:call",
+          "type": {
+            "number": "banker"
+          }
+        }
+      ]
+    }
+  ],
 
 	"apps": [
 		{
-			"name": "Telefone",
+			"name": "Ligar",
 			"icons": "/html/static/img/icons_app/call.png",
 			"routeName": "appels",
 			"inHomePage": true
@@ -255,7 +163,7 @@
 			"inHomePage": true
 		},
 		{
-			"name": "Configurações",
+			"name": "configurações",
 			"icons": "/html/static/img/icons_app/settings.png",
 			"routeName": "parametre",
 			"inHomePage": true
@@ -267,23 +175,23 @@
 			"inHomePage": false
 		},
 		{
-			"name": "Bourse",
+			"name": "Bolsa de Valores",
 			"icons": "/html/static/img/icons_app/bourse.png",
 			"routeName": "bourse",
 			"enabled": true
 		},
 		{
-			"name": "Fotos",
+			"name": "Camera",
 			"icons": "/html/static/img/icons_app/photo.png",
 			"routeName": "photo"
 		},
 		{
-			"name": "Dark Chat",
+			"name": "Whatsapp",
 			"icons": "/html/static/img/icons_app/tchat.png",
 			"routeName": "tchat"
 		},
 		{
-			"name": "9GAG",
+			"name": "Youtube",
 			"icons": "/html/static/img/icons_app/9gag.png",
 			"routeName": "9gag"
 		}

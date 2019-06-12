@@ -1,6 +1,5 @@
 --====================================================================================
 -- #Author: Jonathan D @ Gannon
--- #Tradução: Renildo Marcio
 --====================================================================================
 
 -- Configuration
@@ -12,7 +11,7 @@ local KeyToucheCloseEvent = {
     { code = 176, event = 'Enter' },
     { code = 177, event = 'Backspace' },
 }
-local KeyOpenClose = 289 -- F2
+local KeyOpenClose = 288 -- F1
 local KeyTakeCall = 38 -- E
 local menuIsOpen = false
 local contacts = {}
@@ -26,7 +25,7 @@ local currentPlaySound = false
 local soundId = 1485
 
 --====================================================================================
---  Ativar ou desativar um aplicativo (appName => config.json)
+--  Active ou Deactive une application (appName => config.json)
 --====================================================================================
 
 RegisterNetEvent('gcPhone:setEnableApp')
@@ -35,7 +34,7 @@ AddEventHandler('gcPhone:setEnableApp', function(appName, enable)
 end)
 
 --====================================================================================
---  Gerenciamento de chamadas fixo
+--  Gestion des appels fixe
 --====================================================================================
 
 function startFixeCall (fixeNumber)
@@ -66,7 +65,7 @@ AddEventHandler("gcPhone:notifyFixePhoneChange", function(_PhoneInCall)
 end)
 
 --[[
-  As informações contidas nos jogos estão sujeitas a uma correção
+  Affiche les imformations quant le joueurs est proche d'un fixe
 --]]
 function showFixePhoneHelper (coords)
     for number, data in pairs(FixePhone) do
@@ -75,7 +74,7 @@ function showFixePhoneHelper (coords)
             coords.x, coords.y, coords.z, 1)
         if dist <= 2.0 then
             SetTextComponentFormat("STRING")
-            AddTextComponentString("~g~" .. data.name .. ' ~o~' .. number .. '~n~~INPUT_PICKUP~~w~ Utilitário')
+            AddTextComponentString("~g~" .. data.name .. ' ~o~' .. number .. '~n~~INPUT_PICKUP~~w~ Utiliser')
             DisplayHelpTextFromStringLabel(0, 0, 0, -1)
             if IsControlJustPressed(1, KeyTakeCall) then
                 startFixeCall(number)
@@ -131,25 +130,25 @@ end)
 --
 --====================================================================================
 Citizen.CreateThread(function()
-
-        while true do
-            Citizen.Wait(0)
-            -- if IsControlJustPressed(1, KeyOpenClose) and GetLastInputMethod( 0 ) then
-			if IsControlJustPressed(1, KeyOpenClose) and GetLastInputMethod( 2 ) then -- keyboards return true, no keybord return false
-				TooglePhone()
+	while true do
+		Citizen.Wait(0)
+		if IsControlJustPressed(1, KeyOpenClose) and GetLastInputMethod( 0 ) then
+			ESX.TriggerServerCallback('gcphone:getItemAmount', function(qtty)
+				if qtty > 0 then
+					TooglePhone()
+				else
+					ESX.ShowNotification("Você não tem um ~r~Celular~s~")
+				end
+			end, 'tel')
+		end
+		if menuIsOpen == true then
+			for _, value in ipairs(KeyToucheCloseEvent) do
+				if IsControlJustPressed(1, value.code) then
+					SendNUIMessage({keyUp = value.event})
+				end
 			end
-
-			if IsControlJustPressed(1, KeyOpenClose) and GetLastInputMethod( 0 ) then
-				TooglePhone()
-			end
-            if menuIsOpen == true then
-                for _, value in ipairs(KeyToucheCloseEvent) do
-                    if IsControlJustPressed(1, value.code) then
-                        SendNUIMessage({keyUp = value.event})
-                    end
-                end
-            end
-        end
+		end
+	end
 end)
 
 RegisterNetEvent("gcPhone:forceOpenPhone")
@@ -190,12 +189,12 @@ AddEventHandler("gcPhone:receiveMessage", function(message)
     -- SendNUIMessage({event = 'updateMessages', messages = messages})
     SendNUIMessage({event = 'newMessage', message = message})
     if message.owner == 0 then
-        local text = '~o~Nouveau message'
+        local text = '~o~Nova mensagem'
         if ShowNumberNotification == true then
-            text = '~o~Nouveau message du ~y~'.. message.transmitter
+            text = '~o~Nova mensagem de ~y~'.. message.transmitter
             for _,contact in pairs(contacts) do
                 if contact.number == message.transmitter then
-                    text = '~o~Nouveau message de ~g~'.. contact.display
+                    text = '~o~Nova mensagem de ~g~'.. contact.display
                     break
                 end
             end
