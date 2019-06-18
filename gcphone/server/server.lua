@@ -353,24 +353,24 @@ AddEventHandler('gcPhone:internal_startCall', function(source, phone_number, rtc
 		onCallFixePhone(source, phone_number, rtcOffer, extraData)
 		return
 	end
-	
+
 	local rtcOffer = rtcOffer
 	if phone_number == nil or phone_number == '' then
 		print('BAD CALL NUMBER IS NIL')
 		return
 	end
-	
+
 	local hidden = string.sub(phone_number, 1, 1) == '#'
 	if hidden == true then
 		phone_number = string.sub(phone_number, 2)
 	end
-	
+
 	local indexCall = lastIndexCall
 	lastIndexCall = lastIndexCall + 1
-	
+
 	local sourcePlayer = tonumber(source)
 	local srcIdentifier = getPlayerID(source)
-	
+
 	local srcPhone = ''
 	print(json.encode(extraData))
 	if extraData ~= nil and extraData.useNumber ~= nil then
@@ -393,8 +393,8 @@ AddEventHandler('gcPhone:internal_startCall', function(source, phone_number, rtc
 		rtcOffer = rtcOffer,
 		extraData = extraData
 	}
-	
-	
+
+
 	if is_valid == true then
 		getSourceFromIdentifier(destPlayer, function (srcTo)
 			if srcTo ~= nill then
@@ -411,7 +411,7 @@ AddEventHandler('gcPhone:internal_startCall', function(source, phone_number, rtc
 		TriggerEvent('gcPhone:addCall', AppelsEnCours[indexCall])
 		TriggerClientEvent('gcPhone:waitingCall', sourcePlayer, AppelsEnCours[indexCall], true)
 	end
-	
+
 end)
 
 RegisterServerEvent('gcPhone:startCall')
@@ -446,8 +446,10 @@ AddEventHandler('gcPhone:acceptCall', function(infoCall, rtcAnswer)
 		if AppelsEnCours[id].transmitter_src ~= nil and AppelsEnCours[id].receiver_src~= nil then
 			AppelsEnCours[id].is_accepts = true
 			AppelsEnCours[id].rtcAnswer = rtcAnswer
-			TriggerClientEvent('gcPhone:acceptCall', AppelsEnCours[id].transmitter_src, AppelsEnCours[id], true)
-			TriggerClientEvent('gcPhone:acceptCall', AppelsEnCours[id].receiver_src, AppelsEnCours[id], false)
+      TriggerClientEvent('gcPhone:acceptCall', AppelsEnCours[id].transmitter_src, AppelsEnCours[id], true)
+      SetTimeout(1000, function()
+        TriggerClientEvent('gcPhone:acceptCall', AppelsEnCours[id].receiver_src, AppelsEnCours[id], false)
+      end)
 			saveAppels(AppelsEnCours[id])
 		end
 	end
@@ -468,7 +470,7 @@ AddEventHandler('gcPhone:rejectCall', function (infoCall)
 		if AppelsEnCours[id].receiver_src ~= nil then
 			TriggerClientEvent('gcPhone:rejectCall', AppelsEnCours[id].receiver_src)
 		end
-		
+
 		if AppelsEnCours[id].is_accepts == false then
 			saveAppels(AppelsEnCours[id])
 		end
@@ -590,21 +592,21 @@ end
 function onCallFixePhone (source, phone_number, rtcOffer, extraData)
 	local indexCall = lastIndexCall
 	lastIndexCall = lastIndexCall + 1
-	
+
 	local hidden = string.sub(phone_number, 1, 1) == '#'
 	if hidden == true then
 		phone_number = string.sub(phone_number, 2)
 	end
 	local sourcePlayer = tonumber(source)
 	local srcIdentifier = getPlayerID(source)
-	
+
 	local srcPhone = ''
 	if extraData ~= nil and extraData.useNumber ~= nil then
 		srcPhone = extraData.useNumber
 	else
 		srcPhone = getNumberPhone(srcIdentifier)
 	end
-	
+
 	AppelsEnCours[indexCall] = {
 		id = indexCall,
 		transmitter_src = sourcePlayer,
@@ -618,9 +620,9 @@ function onCallFixePhone (source, phone_number, rtcOffer, extraData)
 		extraData = extraData,
 		coords = FixePhone[phone_number].coords
 	}
-	
+
 	PhoneFixeInfo[indexCall] = AppelsEnCours[indexCall]
-	
+
 	TriggerClientEvent('gcPhone:notifyFixePhoneChange', -1, PhoneFixeInfo)
 	TriggerClientEvent('gcPhone:waitingCall', sourcePlayer, AppelsEnCours[indexCall], true)
 end
@@ -629,7 +631,7 @@ end
 
 function onAcceptFixePhone(source, infoCall, rtcAnswer)
 	local id = infoCall.id
-	
+
 	AppelsEnCours[id].receiver_src = source
 	if AppelsEnCours[id].transmitter_src ~= nil and AppelsEnCours[id].receiver_src~= nil then
 		AppelsEnCours[id].is_accepts = true
@@ -652,5 +654,5 @@ function onRejectFixePhone(source, infoCall, rtcAnswer)
 		saveAppels(AppelsEnCours[id])
 	end
 	AppelsEnCours[id] = nil
-	
+
 end
